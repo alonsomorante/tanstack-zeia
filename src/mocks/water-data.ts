@@ -1,5 +1,7 @@
 import type {
   WaterConsumptionSummary,
+  WaterDayComparisonEntry,
+  WaterDayComparisonResponse,
   WaterDistributionResponse,
   WaterHeadquartersResponse,
   WaterMeasurementPointsResponse,
@@ -269,6 +271,111 @@ export function makeWaterReadingsGraph(args: WaterGraphArgs): WaterReadingsGraph
     count++
   }
   return results
+}
+
+export interface WaterDayComparisonArgs {
+  dateAfter: string
+  dateBefore: string
+  lastBy: string
+  weekday?: string
+}
+
+function dayDifference(dateStr: string): number {
+  const d = parseDateSafe(dateStr)
+  if (!d) return 0
+  return Math.floor(d.getTime() / 86400000)
+}
+
+export function makeWaterDayComparison(args: WaterDayComparisonArgs): WaterDayComparisonResponse {
+  const start = parseDateSafe(args.dateAfter)
+  const end = parseDateSafe(args.dateBefore)
+  const result: WaterDayComparisonResponse = []
+
+  const isHourMode = args.lastBy === 'hour'
+  const inclusiveDays = (): string[] => {
+    // Semana siguiente Lunes→Domingo simulada para tener 2+ fechas en modo hora
+    const dates: string[] = []
+    const base = start ?? new Date()
+    const stop = end ?? new Date(base.getTime() + 3 * 86400000)
+    let d = new Date(base)
+    while (d <= stop && dates.length < 4) {
+      if (isWeekdayIncluded(args.weekday, d)) dates.push(dateISO(d))
+      d = new Date(d.getFullYear(), d.getMonth(), d.getDate() + 1)
+    }
+    return dates
+  }
+
+  if (isHourMode) {
+    const dates = inclusiveDays()
+
+    for (const dayISOStr of dates) {
+      const entries: WaterDayComparisonEntry[] = []
+      for (let hour = 0; hour < 24; hour++) {
+        const base = 55 + hour * 3.5 + (dayDifference(dayISOStr) % 7) * 4
+        const variation = (Math.sin((hour + dayDifference(dayISOStr)) * 0.8) + 1) * 12
+        const value = Number((base + variation).toFixed(2))
+        const hasConsumption = hour < 2 || (hour >= 6 && hour <= 21)
+        if (!hasConsumption) continue
+        entries.push({
+          time: `${String(hour).padStart(2, '0')}:00:00`,
+          indicator: 'consumo_total_litros',
+          unit: 'L',
+          value,
+          is_average: false,
+          device: '24E124136C123456',
+          measurement_point: 'Ingreso General de Red',
+        })
+      }
+      result.push({ [dayISOStr]: entries })
+    }
+
+    if (dates.length >= 2) {
+      const habitual: WaterDayComparisonEntry[] = []
+      for (let hour = 0; hour < 24; hour++) {
+        const time = `${String(hour).padStart(2, '0')}:00:00`
+        const values = dates
+          .map((dayISOStr) => {
+            const day = result.find((item) => item[dayISOStr])
+            return day?.[dayISOStr]?.find((e) => e.time === time)?.value
+          })
+          .filter((v): v is number => v !== undefined)
+        if (values.length < 2) continue
+        habitual.push({
+          time,
+          indicator: 'consumo_total_litros',
+          unit: 'L',
+          value: Number((values.reduce((a, b) => a + b, 0) / values.length).toFixed(4)),
+          is_average: true,
+          sample_count: values.length,
+          device: '24E124136C123456',
+          measurement_point: 'Ingreso General de Red',
+        })
+      }
+      result.push({ habitual })
+    }
+
+    return result
+  }
+
+  // last_by=day → un solo valor por fecha
+  const dates = inclusiveDays().slice(0, 8)
+  for (const dayISOStr of dates) {
+    result.push({
+      [dayISOStr]: [
+        {
+          time: '00:00:00',
+          indicator: 'consumo_total_litros',
+          unit: 'L',
+          value: Number((1400 + (dayDifference(dayISOStr) % 5) * 120 + (dayDifference(dayISOStr) % 3) * 33).toFixed(2)),
+          is_average: false,
+          device: '24E124136C123456',
+          measurement_point: 'Ingreso General de Red',
+        },
+      ],
+    })
+  }
+
+  return result
 }
 
 // ── Tabla de Lecturas ───────────────────────────────────────────────

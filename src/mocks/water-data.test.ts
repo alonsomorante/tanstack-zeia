@@ -6,6 +6,7 @@ import {
   makeWaterConsumptionDistribution,
   makeWaterReadingsGraph,
   makeWaterReadingsTable,
+  makeWaterDayComparison,
 } from './water-data'
 
 describe('mocks de agua', () => {
@@ -54,6 +55,32 @@ describe('mocks de agua', () => {
       lastBy: 'hour',
     })
     expect(graph).toHaveLength(24)
+  })
+
+  it('genera comparación por día con varias fechas y perfil habitual en modo hora', () => {
+    const comparison = makeWaterDayComparison({
+      dateAfter: '2026-08-03',
+      dateBefore: '2026-08-04',
+      lastBy: 'hour',
+    })
+    const keys = comparison.map((item) => Object.keys(item)[0])
+    expect(keys.length).toBeGreaterThan(2)
+    expect(keys).toContain('habitual')
+    const habitual = comparison.find((item) => item.habitual)?.habitual ?? []
+    expect(habitual.length).toBeGreaterThan(0)
+    expect(habitual[0].is_average).toBe(true)
+    expect(habitual[0].sample_count).toBeGreaterThanOrEqual(2)
+  })
+
+  it('modo día devuelve un valor por fecha sin perfil habitual', () => {
+    const comparison = makeWaterDayComparison({
+      dateAfter: '2026-08-03',
+      dateBefore: '2026-08-08',
+      lastBy: 'day',
+    })
+    expect(comparison.length).toBeGreaterThan(0)
+    expect(comparison.every((item) => !('habitual' in item))).toBe(true)
+    expect(comparison[0][Object.keys(comparison[0])[0]][0].unit).toBe('L')
   })
 
   it('pagina la tabla de lecturas', () => {

@@ -230,3 +230,35 @@ interface WaterReadingsResponse {
   }>
 }
 ```
+
+---
+
+## 7. Water Day Comparison (Comparación por Día)
+
+```
+GET /headquarter/{headquarter_id}/water_pipe/{water_pipe_id}/measurement_point_water/{measurement_point_id}/readings/graph-especific?last_by={hour|day}&date_after={YYYY-MM-DD}&date_before={YYYY-MM-DD}&weekday={1,2,3,4,5}
+```
+
+Devuelve el consumo de agua del punto de medición **agrupado por fecha** (`YYYY-MM-DD`) y, dentro de cada fecha, **por hora del día**. Cuando hay 2 o más fechas con datos en modo horario, agrega el perfil **`habitual`**: el promedio de consumo por hora a lo largo de las fechas consultadas.
+
+**Usado por:** Comparación por Día (`/energia/water/dashboard/comparador`).
+
+**Path params:**
+- `headquarter_id` (number, required)
+- `water_pipe_id` (number, required)
+- `measurement_point_id` (number, required)
+
+**Query params:**
+- `last_by` (string, default `hour`) — se recomienda `hour` y `day`
+- `weekday` (string, optional, comma-separated) — ISO 8601 days
+- `date_after` / `date_before` (string) — format `YYYY-MM-DD`
+
+> ⚠️ **El indicador es fijo**: siempre devuelve `consumo_total_litros` (litros). No existe el parámetro `indicador`.
+
+**Response** (ver documentación completa externa en `WATER_DAY_COMPARISON_API.md`:
+
+```typescript
+type WaterDayComparisonResponse = Array<Record<string, WaterDayComparisonEntry[]>>
+// Claves: fechas "YYYY-MM-DD" y, cuando aplica, "habitual"
+// WaterDayComparisonEntry: { time, indicator, unit, value, is_average, device, measurement_point, sample_count? }
+```

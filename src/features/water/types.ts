@@ -87,6 +87,21 @@ export interface WaterReadingGraphPoint {
 
 export type WaterReadingsGraphResponse = WaterReadingGraphPoint[]
 
+export interface WaterDayComparisonEntry {
+  time: string
+  indicator: string
+  unit: string
+  value: number
+  is_average: boolean
+  device: string
+  measurement_point: string
+  sample_count?: number
+}
+
+export type WaterDayComparisonItem = Record<string, WaterDayComparisonEntry[]>
+
+export type WaterDayComparisonResponse = WaterDayComparisonItem[]
+
 export interface WaterReadingIndicators {
   id: number
   measurement_point_name: string
