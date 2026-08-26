@@ -65,7 +65,9 @@ describe('analytics', () => {
       last_name: 'Doe',
       companies: [{ id: 10, name: 'Zeia', role: 'admin' }],
       is_user_energy_monitoring: true,
+      is_user_water_monitoring: false,
       energy_modules: [],
+      water_modules: [],
       is_user_quality_air_auto: false,
       is_user_thermal_comfort: false,
     })

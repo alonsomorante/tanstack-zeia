@@ -33,10 +33,23 @@ interface AuthResponse {
     last_name: string
     companies: Array<{ id: number; name: string; role: string }>
     is_user_energy_monitoring: boolean
+    is_user_water_monitoring: boolean
     energy_modules: Array<{
       name: string
       url: string | null
       icon: string          // base64 SVG
+      is_active: boolean
+      children: Array<{
+        name: string
+        url: string | null
+        icon: string        // base64 SVG
+      }>
+    }>
+    water_modules: Array<{
+      name: string
+      url: string | null
+      icon: string          // base64 SVG
+      monitoring_type: string  // e.g. "water"
       is_active: boolean
       children: Array<{
         name: string
