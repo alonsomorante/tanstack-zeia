@@ -3,6 +3,7 @@ import { useAuth } from '@/features/auth/hooks/use-auth'
 import { useRouter } from '@tanstack/react-router'
 import { resetEnergyAnalytics } from '@/lib/analytics'
 import { PeakPowerNotice } from './peak-power-notice'
+import { ResourceSwitcher } from './resource-switcher'
 
 
 export function DashboardHeader() {
@@ -26,6 +27,8 @@ export function DashboardHeader() {
             className="h-8 w-auto object-contain"
           />
         </div>
+        <div className="h-6 w-px bg-border" />
+        <ResourceSwitcher />
       </div>
 
       {/* Right Section */}

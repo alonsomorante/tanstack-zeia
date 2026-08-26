@@ -5,6 +5,7 @@ import { Eye, EyeOff, Loader2, Activity, ArrowLeft } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { identifyEnergyUser } from '@/lib/analytics'
 import { requestToken, AuthError } from '@/features/auth/api/request-token'
+import { getFirstResourceModuleUrl } from '@/features/auth/lib/modules'
 import { useAuth } from '@/features/auth/hooks/use-auth'
 
 export const Route = createFileRoute('/energia/login')({
@@ -25,14 +26,11 @@ export function LoginPage() {
       setAuth(data)
       identifyEnergyUser(data.user)
 
-      const modules = data.user.energy_modules
-      const hasModules = Array.isArray(modules) && modules.length > 0
-      const firstModuleUrl = hasModules
-        ? (modules[0]?.children?.[0]?.url ?? modules[0]?.url)
-        : null
-
-      const targetUrl = firstModuleUrl ?? '/energia/dashboard/panel'
-      router.navigate({ to: targetUrl })
+      const firstUrl =
+        getFirstResourceModuleUrl(data.user, 'energy') ??
+        getFirstResourceModuleUrl(data.user, 'water') ??
+        '/energia/dashboard/panel'
+      router.navigate({ to: firstUrl })
     },
     onError: (err: Error) => {
       if (err instanceof AuthError) {

@@ -513,6 +513,19 @@ Then I will reply with the list of sections registered for that module.
 
 > **Note:** `(pending)` modules have no sections yet. They will be filled as they are built via `@Z-MOD`.
 
+## Water (Recurso Agua) Module Sections Registry
+
+> Los clientes pueden tener habilitados los recursos Energía (`is_user_energy_monitoring`) y/o Agua (`is_user_water_monitoring`). El switch de recurso vive en el header (`ResourceSwitcher`); el sidebar renderiza `user.energy_modules` o `user.water_modules` según el recurso activo (`useResource()`, persistido en localStorage `zeia-resource`). Las URLs de módulos del API pueden venir relativas (p.ej. `energia/water/dashboard/panel`) — se normalizan con `normalizeModuleUrl()` (src/features/auth/lib/modules.ts).
+
+| Module | Route | Sections |
+|--------|-------|----------|
+| Panel Dashboard Agua | `/energia/water/dashboard/panel` | Filter Bar (Sede, Tubería, Rango de fechas), KPI Row (Consumo hoy, Consumo mes, Promedio diario), Distribución de Consumo (Split View: donut `WaterConsumptionPieChart` + `WaterDistributionList`), Lecturas (sub-filtros punto/indicador/días/año-mes + gráfica de barras `WaterReadingsChart`) |
+| Análisis por Indicador Agua | `/energia/water/dashboard/home` | Filter Bar (Sede, Tubería, Punto, Indicador, Agrupación Día/Hora, Rango de fechas), Gráfica de lecturas (`WaterIndicatorGraph`), Tabla de lecturas paginada (`WaterReadingsTable`) |
+
+> **Nota:** La ruta del Análisis por Indicador Agua ya existe aunque el backend aún no lo incluye en `water_modules` (se agregará en el endpoint de login). El tipo de `WaterModule` ya soporta `monitoring_type`. La ruta está pensada para el URL `energia/water/dashboard/home`.
+
+> API functions/tipos de agua viven en `src/features/water/` (`api/README.md` documenta los endpoints).
+
 ## Ocupacional Module Sections Registry
 
 > Routes are internal-prefixed `/ambiental/*` (frontend) but the backend API uses the `ocupacional` namespace. Feature folder is `src/features/ambiental/`; API functions and types keep the `Ocupacional` prefix to reflect the backend naming.

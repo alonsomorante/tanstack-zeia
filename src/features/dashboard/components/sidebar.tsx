@@ -2,15 +2,21 @@ import { useState } from 'react'
 import { Link, useRouterState } from '@tanstack/react-router'
 import { ChevronLeft, ChevronRight, Zap } from 'lucide-react'
 import { useAuth } from '@/features/auth/hooks/use-auth'
+import { useResource } from '@/features/auth/hooks/use-resource'
+import { normalizeModuleUrl } from '@/features/auth/lib/modules'
 import { cn } from '@/lib/utils'
 
 export function DashboardSidebar() {
   const [collapsed, setCollapsed] = useState(false)
   const { user } = useAuth()
+  const { resource } = useResource()
   const routerState = useRouterState()
   const currentPath = routerState.location.pathname
 
-  const modules = user?.energy_modules ?? []
+  const modules =
+    resource === 'water'
+      ? (user?.water_modules ?? [])
+      : (user?.energy_modules ?? [])
 
   return (
     <aside
@@ -46,37 +52,43 @@ export function DashboardSidebar() {
             <p className="text-xs text-text-muted">Cargando módulos...</p>
           </div>
         )}
-        {modules.map((module, moduleIndex) => (
-          <div key={moduleIndex} className="mb-1">
-            {/* Module header */}
-            {module.url ? (
-              <SidebarLink
-                href={module.url}
-                icon={module.icon}
-                label={module.name}
-                collapsed={collapsed}
-                active={currentPath === module.url}
-              />
-            ) : !collapsed && (
-              <div className="px-3 py-2 mt-4 mb-1">
-                <span className="label-executive">{module.name}</span>
-              </div>
-            )}
+        {modules.map((module, moduleIndex) => {
+          const moduleUrl = normalizeModuleUrl(module.url)
+          return (
+            <div key={moduleIndex} className="mb-1">
+              {/* Module header */}
+              {moduleUrl ? (
+                <SidebarLink
+                  href={moduleUrl}
+                  icon={module.icon}
+                  label={module.name}
+                  collapsed={collapsed}
+                  active={currentPath === moduleUrl}
+                />
+              ) : !collapsed && (
+                <div className="px-3 py-2 mt-4 mb-1">
+                  <span className="label-executive">{module.name}</span>
+                </div>
+              )}
 
-            {/* Children */}
-            {module.children?.map((child, childIndex) => (
-              <SidebarLink
-                key={childIndex}
-                href={child.url ?? '#'}
-                icon={child.icon}
-                label={child.name}
-                collapsed={collapsed}
-                active={currentPath === child.url}
-                indent={!module.url && !collapsed}
-              />
-            ))}
-          </div>
-        ))}
+              {/* Children */}
+              {module.children?.map((child, childIndex) => {
+                const childUrl = normalizeModuleUrl(child.url)
+                return (
+                  <SidebarLink
+                    key={childIndex}
+                    href={childUrl ?? '#'}
+                    icon={child.icon}
+                    label={child.name}
+                    collapsed={collapsed}
+                    active={currentPath === childUrl}
+                    indent={!moduleUrl && !collapsed}
+                  />
+                )
+              })}
+            </div>
+          )
+        })}
       </nav>
     </aside>
   )

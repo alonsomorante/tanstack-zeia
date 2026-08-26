@@ -18,6 +18,15 @@ export interface EnergyModule {
   children: EnergyModuleChild[]
 }
 
+export interface WaterModule {
+  name: string
+  url: string | null
+  icon: string
+  monitoring_type: 'water' | string
+  is_active: boolean
+  children: EnergyModuleChild[]
+}
+
 export interface User {
   id: number
   email: string
@@ -25,7 +34,9 @@ export interface User {
   last_name: string
   companies: Company[]
   is_user_energy_monitoring: boolean
+  is_user_water_monitoring: boolean
   energy_modules: EnergyModule[]
+  water_modules: WaterModule[]
   is_user_quality_air_auto: boolean
   is_user_thermal_comfort: boolean
 }

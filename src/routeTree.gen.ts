@@ -25,6 +25,8 @@ import { Route as AmbientalDashboardRoomsRouteImport } from './routes/ambiental/
 import { Route as AmbientalDashboardMonitoreoRouteImport } from './routes/ambiental/dashboard/monitoreo'
 import { Route as AmbientalDashboardAnalisisRouteImport } from './routes/ambiental/dashboard/analisis'
 import { Route as AmbientalDashboardAlertasRouteImport } from './routes/ambiental/dashboard/alertas'
+import { Route as EnergiaWaterDashboardPanelRouteImport } from './routes/energia/water/dashboard/panel'
+import { Route as EnergiaWaterDashboardHomeRouteImport } from './routes/energia/water/dashboard/home'
 import { Route as EnergiaDashboardDesbalanceAlertasRouteImport } from './routes/energia/dashboard/desbalance/alertas'
 import { Route as AmbientalDashboardAnalisisPicoshistoricosRouteImport } from './routes/ambiental/dashboard/analisis/picoshistoricos'
 import { Route as AmbientalDashboardAnalisisIndicadoresRouteImport } from './routes/ambiental/dashboard/analisis/indicadores'
@@ -118,6 +120,18 @@ const AmbientalDashboardAlertasRoute =
     path: '/ambiental/dashboard/alertas',
     getParentRoute: () => rootRouteImport,
   } as any)
+const EnergiaWaterDashboardPanelRoute =
+  EnergiaWaterDashboardPanelRouteImport.update({
+    id: '/energia/water/dashboard/panel',
+    path: '/energia/water/dashboard/panel',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const EnergiaWaterDashboardHomeRoute =
+  EnergiaWaterDashboardHomeRouteImport.update({
+    id: '/energia/water/dashboard/home',
+    path: '/energia/water/dashboard/home',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const EnergiaDashboardDesbalanceAlertasRoute =
   EnergiaDashboardDesbalanceAlertasRouteImport.update({
     id: '/alertas',
@@ -164,6 +178,8 @@ export interface FileRoutesByFullPath {
   '/ambiental/dashboard/analisis/indicadores': typeof AmbientalDashboardAnalisisIndicadoresRoute
   '/ambiental/dashboard/analisis/picoshistoricos': typeof AmbientalDashboardAnalisisPicoshistoricosRoute
   '/energia/dashboard/desbalance/alertas': typeof EnergiaDashboardDesbalanceAlertasRoute
+  '/energia/water/dashboard/home': typeof EnergiaWaterDashboardHomeRoute
+  '/energia/water/dashboard/panel': typeof EnergiaWaterDashboardPanelRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -186,6 +202,8 @@ export interface FileRoutesByTo {
   '/ambiental/dashboard/analisis/indicadores': typeof AmbientalDashboardAnalisisIndicadoresRoute
   '/ambiental/dashboard/analisis/picoshistoricos': typeof AmbientalDashboardAnalisisPicoshistoricosRoute
   '/energia/dashboard/desbalance/alertas': typeof EnergiaDashboardDesbalanceAlertasRoute
+  '/energia/water/dashboard/home': typeof EnergiaWaterDashboardHomeRoute
+  '/energia/water/dashboard/panel': typeof EnergiaWaterDashboardPanelRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -209,6 +227,8 @@ export interface FileRoutesById {
   '/ambiental/dashboard/analisis/indicadores': typeof AmbientalDashboardAnalisisIndicadoresRoute
   '/ambiental/dashboard/analisis/picoshistoricos': typeof AmbientalDashboardAnalisisPicoshistoricosRoute
   '/energia/dashboard/desbalance/alertas': typeof EnergiaDashboardDesbalanceAlertasRoute
+  '/energia/water/dashboard/home': typeof EnergiaWaterDashboardHomeRoute
+  '/energia/water/dashboard/panel': typeof EnergiaWaterDashboardPanelRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -233,6 +253,8 @@ export interface FileRouteTypes {
     | '/ambiental/dashboard/analisis/indicadores'
     | '/ambiental/dashboard/analisis/picoshistoricos'
     | '/energia/dashboard/desbalance/alertas'
+    | '/energia/water/dashboard/home'
+    | '/energia/water/dashboard/panel'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -255,6 +277,8 @@ export interface FileRouteTypes {
     | '/ambiental/dashboard/analisis/indicadores'
     | '/ambiental/dashboard/analisis/picoshistoricos'
     | '/energia/dashboard/desbalance/alertas'
+    | '/energia/water/dashboard/home'
+    | '/energia/water/dashboard/panel'
   id:
     | '__root__'
     | '/'
@@ -277,6 +301,8 @@ export interface FileRouteTypes {
     | '/ambiental/dashboard/analisis/indicadores'
     | '/ambiental/dashboard/analisis/picoshistoricos'
     | '/energia/dashboard/desbalance/alertas'
+    | '/energia/water/dashboard/home'
+    | '/energia/water/dashboard/panel'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -296,6 +322,8 @@ export interface RootRouteChildren {
   EnergiaDashboardMonitoreoRoute: typeof EnergiaDashboardMonitoreoRoute
   EnergiaDashboardPanelRoute: typeof EnergiaDashboardPanelRoute
   EnergiaDashboardTarifarioRoute: typeof EnergiaDashboardTarifarioRoute
+  EnergiaWaterDashboardHomeRoute: typeof EnergiaWaterDashboardHomeRoute
+  EnergiaWaterDashboardPanelRoute: typeof EnergiaWaterDashboardPanelRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -412,6 +440,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AmbientalDashboardAlertasRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/energia/water/dashboard/panel': {
+      id: '/energia/water/dashboard/panel'
+      path: '/energia/water/dashboard/panel'
+      fullPath: '/energia/water/dashboard/panel'
+      preLoaderRoute: typeof EnergiaWaterDashboardPanelRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/energia/water/dashboard/home': {
+      id: '/energia/water/dashboard/home'
+      path: '/energia/water/dashboard/home'
+      fullPath: '/energia/water/dashboard/home'
+      preLoaderRoute: typeof EnergiaWaterDashboardHomeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/energia/dashboard/desbalance/alertas': {
       id: '/energia/dashboard/desbalance/alertas'
       path: '/alertas'
@@ -496,6 +538,8 @@ const rootRouteChildren: RootRouteChildren = {
   EnergiaDashboardMonitoreoRoute: EnergiaDashboardMonitoreoRoute,
   EnergiaDashboardPanelRoute: EnergiaDashboardPanelRoute,
   EnergiaDashboardTarifarioRoute: EnergiaDashboardTarifarioRoute,
+  EnergiaWaterDashboardHomeRoute: EnergiaWaterDashboardHomeRoute,
+  EnergiaWaterDashboardPanelRoute: EnergiaWaterDashboardPanelRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
