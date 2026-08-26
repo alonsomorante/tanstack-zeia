@@ -43,7 +43,7 @@ describe('mocks de agua', () => {
       lastBy: 'day',
     })
     expect(graph.length).toBeGreaterThan(0)
-    expect(graph.every((r) => r.difference > 0)).toBe(true)
+    expect(graph.every((r) => r.difference !== null && r.difference > 0)).toBe(true)
   })
 
   it('genera 24 barras horarias para last_by=hour', () => {
