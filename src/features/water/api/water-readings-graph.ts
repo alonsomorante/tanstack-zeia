@@ -1,7 +1,5 @@
 import { apiFetch } from '@/lib/api-client'
 import type { WaterReadingsGraphResponse } from '../types'
-import { USE_WATER_MOCKS } from '@/mocks/config'
-import { makeWaterReadingsGraph } from '@/mocks/water-data'
 
 export function fetchWaterReadingsGraph(
   headquarterId: number,
@@ -13,11 +11,6 @@ export function fetchWaterReadingsGraph(
   weekday?: string,
   lastBy: string = 'day'
 ): Promise<WaterReadingsGraphResponse> {
-  if (USE_WATER_MOCKS) {
-    return Promise.resolve(
-      makeWaterReadingsGraph({ dateAfter, dateBefore, indicador, weekday, lastBy })
-    )
-  }
   const params = new URLSearchParams({
     last_by: lastBy,
     date_after: dateAfter,

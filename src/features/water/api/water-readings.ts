@@ -1,7 +1,5 @@
 import { apiFetch } from '@/lib/api-client'
 import type { WaterReadingsResponse } from '../types'
-import { USE_WATER_MOCKS } from '@/mocks/config'
-import { makeWaterReadingsTable } from '@/mocks/water-data'
 
 export interface WaterReadingsTableParams {
   indicador?: string
@@ -21,7 +19,6 @@ export function fetchWaterReadingsTable(
   measurementPointId: number,
   params: WaterReadingsTableParams
 ): Promise<WaterReadingsResponse> {
-  if (USE_WATER_MOCKS) return Promise.resolve(makeWaterReadingsTable(params))
   const query = new URLSearchParams()
 
   if (params.page !== undefined) query.set('page', String(params.page))
