@@ -1,7 +1,5 @@
 import { apiFetch } from '@/lib/api-client'
 import type { WaterDayComparisonResponse } from '../types'
-import { USE_WATER_MOCKS } from '@/mocks/config'
-import { makeWaterDayComparison } from '@/mocks/water-data'
 
 export interface WaterDayComparisonOptions {
   lastBy?: string
@@ -17,12 +15,6 @@ export function fetchWaterDayComparison(
   options: WaterDayComparisonOptions = {}
 ): Promise<WaterDayComparisonResponse> {
   const lastBy = options.lastBy ?? 'hour'
-
-  if (USE_WATER_MOCKS) {
-    return Promise.resolve(
-      makeWaterDayComparison({ dateAfter, dateBefore, lastBy, weekday: options.weekday })
-    )
-  }
 
   const params = new URLSearchParams({
     last_by: lastBy,
