@@ -1,4 +1,5 @@
-import { Building2, Droplets, Activity, Tag } from 'lucide-react'
+import { useState } from 'react'
+import { Building2, Droplets, Activity, Tag, FileSpreadsheet, FileText } from 'lucide-react'
 import { ZeiaSelect } from '@/components/ui/select'
 import { DateRangePicker } from '@/components/ui/date-range-picker'
 import { WATER_INDICATOR_OPTIONS } from '../lib/indicators'
@@ -8,9 +9,26 @@ import {
   AGRUPACION_LABELS,
   type Agrupacion,
 } from '../hooks/use-water-home-filters'
+import type { WaterReportFileFormat } from '../api/water-download-report'
 import { cn } from '@/lib/utils'
 
-export function WaterHomeFilters() {
+const WATER_FILE_FORMATS: Array<{ value: WaterReportFileFormat; label: string; icon: typeof FileSpreadsheet }> = [
+  { value: 'xlsx', label: 'XLSX', icon: FileSpreadsheet },
+  { value: 'csv', label: 'CSV', icon: FileText },
+]
+
+interface WaterHomeFiltersProps {
+  onDownloadReport?: (format: WaterReportFileFormat) => void
+  isDownloadingReport?: boolean
+  canDownload?: boolean
+}
+
+export function WaterHomeFilters({
+  onDownloadReport,
+  isDownloadingReport,
+  canDownload,
+}: WaterHomeFiltersProps) {
+  const [fileFormat, setFileFormat] = useState<WaterReportFileFormat>('xlsx')
   const {
     headquarters,
     pipes,
@@ -157,6 +175,61 @@ export function WaterHomeFilters() {
           placeholder="Seleccionar fechas"
         />
       </div>
+
+      {/* Download: Format segmented control + button */}
+      {onDownloadReport && (
+        <>
+          <div className="flex flex-col gap-1.5">
+            <label className="label-executive" style={{ color: '#88939b' }}>Formato de Descarga</label>
+            <div
+              role="radiogroup"
+              aria-label="Formato de descarga"
+              className="inline-flex items-center gap-1 p-1 rounded-lg border border-border bg-card h-[43px]"
+            >
+              {WATER_FILE_FORMATS.map(({ value, label, icon: Icon }) => {
+                const isActive = fileFormat === value
+                return (
+                  <button
+                    key={value}
+                    type="button"
+                    role="radio"
+                    aria-checked={isActive}
+                    onClick={() => setFileFormat(value)}
+                    className={cn(
+                      'flex items-center gap-1.5 px-3 rounded-md text-sm font-semibold transition-all duration-200 h-[33px]',
+                      isActive
+                        ? 'bg-green-600 text-white shadow-soft'
+                        : 'text-text-muted hover:text-text-primary hover:bg-muted'
+                    )}
+                  >
+                    <Icon className="w-4 h-4" />
+                    {label}
+                  </button>
+                )
+              })}
+            </div>
+          </div>
+          <div className="flex flex-col gap-1.5">
+            <label className="label-executive text-text-muted opacity-0 select-none">Descargar</label>
+            <button
+              onClick={() => onDownloadReport(fileFormat)}
+              disabled={isDownloadingReport || !canDownload}
+              className={cn(
+                'flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors h-[43px]',
+                'bg-green-600 text-white hover:bg-green-700',
+                'disabled:opacity-50 disabled:cursor-not-allowed'
+              )}
+            >
+              {fileFormat === 'xlsx' ? (
+                <img src="/excel.png" alt="Excel" className="w-4 h-4" />
+              ) : (
+                <FileText className="w-4 h-4" />
+              )}
+              {isDownloadingReport ? 'Descargando...' : `Descargar ${fileFormat.toUpperCase()}`}
+            </button>
+          </div>
+        </>
+      )}
     </div>
   )
 }

@@ -520,7 +520,7 @@ Then I will reply with the list of sections registered for that module.
 | Module | Route | Sections |
 |--------|-------|----------|
 | Panel Dashboard Agua | `/energia/water/dashboard/panel` | Filter Bar (Sede, Tubería, Rango de fechas), KPI Row (Consumo hoy, Consumo mes, Promedio diario), Distribución de Consumo (Split View: donut `WaterConsumptionPieChart` + `WaterDistributionList`), Lecturas (sub-filtros punto/indicador/días/año-mes + gráfica de barras `WaterReadingsChart`) |
-| Análisis por Indicador Agua | `/energia/water/dashboard/home` | Filter Bar (Sede, Tubería, Punto, Indicador, Agrupación Día/Hora, Rango de fechas), Gráfica de lecturas (`WaterIndicatorGraph`), Tabla de lecturas paginada (`WaterReadingsTable`) |
+| Análisis por Indicador Agua | `/energia/water/dashboard/home` | Filter Bar (Sede, Tubería, Punto, Indicador, Agrupación Día/Hora, Rango de fechas, Formato de Descarga XLSX/CSV), Botón de descarga de reporte (`water-download-report.ts` → `readings/report`), Gráfica de lecturas (`WaterIndicatorGraph`), Tabla de lecturas paginada (`WaterReadingsTable`) |
 | Comparación por Día Agua | `/energia/water/dashboard/comparador` | Filter Bar (Sede, Tubería, Punto, Agrupación Día/Hora, Rango de fechas), Gráfica de comparación (`WaterDayComparisonChart` — línea por fecha + perfil `habitual` solo en modo hora, con toggles por fecha) |
 
 > **Nota:** La ruta del Análisis por Indicador Agua ya existe aunque el backend aún no lo incluye en `water_modules` (se agregará en el endpoint de login). El tipo de `WaterModule` ya soporta `monitoring_type`. La ruta está pensada para el URL `energia/water/dashboard/home`.

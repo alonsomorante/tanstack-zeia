@@ -1,4 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
+import { useState } from 'react'
 import { DashboardShell } from '@/features/dashboard/components/shell'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { WaterHomeFilters } from '../components/water-home-filters'
@@ -6,6 +7,8 @@ import { WaterIndicatorGraph } from '../components/water-indicator-graph'
 import { WaterReadingsTable } from '../components/water-readings-table'
 import { useWaterHomeFilters } from '../hooks/use-water-home-filters'
 import { fetchWaterReadingsTable } from '../api/water-readings'
+import { downloadWaterReadingsReport } from '../api/water-download-report'
+import type { WaterReportFileFormat } from '../api/water-download-report'
 import { formatDateISO, formatDateReadable } from '@/lib/date-utils'
 import { WATER_INDICATOR_INFO } from '../lib/indicators'
 
@@ -23,7 +26,10 @@ export function WaterIndicatorAnalysisPage() {
     dateBefore,
     isReady,
     setPage,
+    measurementPoints,
   } = useWaterHomeFilters()
+
+  const [isDownloading, setIsDownloading] = useState(false)
 
   const dateAfterStr = dateAfter ? (formatDateISO(dateAfter) ?? '') : ''
   const dateBeforeStr = dateBefore ? (formatDateISO(dateBefore) ?? '') : ''
@@ -47,6 +53,29 @@ export function WaterIndicatorAnalysisPage() {
 
   const indicatorInfo = WATER_INDICATOR_INFO[indicador]
 
+  const currentPointName =
+    measurementPoints.find((p) => p.id === puntoId)?.name ?? 'punto-medicion'
+
+  const handleDownloadReport = async (format: WaterReportFileFormat) => {
+    if (!sedeId || !tuberiaId || !puntoId || !dateAfterStr || !dateBeforeStr) return
+    setIsDownloading(true)
+    try {
+      await downloadWaterReadingsReport({
+        headquarterId: sedeId,
+        waterPipeId: tuberiaId,
+        measurementPointId: puntoId,
+        measurementPointName: currentPointName,
+        dateAfter: dateAfterStr,
+        dateBefore: dateBeforeStr,
+        fileFormat: format,
+      })
+    } catch (error) {
+      console.error('Error downloading report:', error)
+    } finally {
+      setIsDownloading(false)
+    }
+  }
+
   return (
     <DashboardShell>
       <div className="space-y-6">
@@ -55,7 +84,11 @@ export function WaterIndicatorAnalysisPage() {
             <h1 className="text-2xl font-bold text-primary">Análisis por Indicador</h1>
             <p className="text-primary">Métricas e indicadores de consumo de agua</p>
           </div>
-          <WaterHomeFilters />
+          <WaterHomeFilters
+            onDownloadReport={handleDownloadReport}
+            isDownloadingReport={isDownloading}
+            canDownload={isReady}
+          />
         </div>
 
         {isReady && dateAfter && dateBefore ? (

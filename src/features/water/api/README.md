@@ -262,3 +262,27 @@ type WaterDayComparisonResponse = Array<Record<string, WaterDayComparisonEntry[]
 // Claves: fechas "YYYY-MM-DD" y, cuando aplica, "habitual"
 // WaterDayComparisonEntry: { time, indicator, unit, value, is_average, device, measurement_point, sample_count? }
 ```
+
+---
+
+## 8. Water Readings Report (Descarga XLSX/CSV)
+
+```
+GET /headquarter/{headquarter_id}/water_pipe/{water_pipe_id}/measurement_point_water/{measurement_point_id}/readings/report?date_after={YYYY-MM-DD}&date_before={YYYY-MM-DD}&file_format={csv|xlsx}
+```
+
+Descarga el reporte de lecturas de un punto de medición de agua como archivo binario (no JSON). Se consume con `downloadExcelFile` (helper compartido en `src/features/dashboard/api/alerts/shared/download.ts`), que agrega el header `Authorization: Token {token}` y dispara la descarga en el navegador.
+
+**Usado por:** Análisis por Indicador Agua (`/energia/water/dashboard/home`) — botón de descarga en `WaterHomeFilters`.
+
+**Path params:**
+- `headquarter_id` (number, required)
+- `water_pipe_id` (number, required)
+- `measurement_point_id` (number, required)
+
+**Query params:**
+- `date_after` (string) — format `YYYY-MM-DD`
+- `date_before` (string) — format `YYYY-MM-DD`
+- `file_format` (string) — `csv` | `xlsx`
+
+**Implementación:** `downloadWaterReadingsReport()` en `src/features/water/api/water-download-report.ts`. El filename se construye como `{nombre_del_punto}_{dd-mm-yy}_{dd-mm-yy}.{format}` (espacios reemplazados por `_`).
