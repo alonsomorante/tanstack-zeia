@@ -3,12 +3,7 @@ import { Building2, Droplets, Activity, Tag, FileSpreadsheet, FileText } from 'l
 import { ZeiaSelect } from '@/components/ui/select'
 import { DateRangePicker } from '@/components/ui/date-range-picker'
 import { WATER_INDICATOR_OPTIONS } from '../lib/indicators'
-import {
-  useWaterHomeFilters,
-  AGRUPACION_OPTIONS,
-  AGRUPACION_LABELS,
-  type Agrupacion,
-} from '../hooks/use-water-home-filters'
+import { useWaterHomeFilters } from '../hooks/use-water-home-filters'
 import type { WaterReportFileFormat } from '../api/water-download-report'
 import { cn } from '@/lib/utils'
 
@@ -37,14 +32,12 @@ export function WaterHomeFilters({
     tuberiaId,
     puntoId,
     indicador,
-    agrupacion,
     dateAfter,
     dateBefore,
     setSedeId,
     setTuberiaId,
     setPuntoId,
     setIndicador,
-    setAgrupacion,
     setDateRange,
     isLoadingHeadquarters,
     isLoadingMeasurementPoints,
@@ -129,38 +122,6 @@ export function WaterHomeFilters({
           placeholder="Seleccionar indicador"
           icon={Tag}
         />
-      </div>
-
-      {/* Agrupación temporal */}
-      <div className="flex flex-col gap-1.5">
-        <label className="label-executive" style={{ color: '#88939b' }}>Agrupación</label>
-        <div
-          role="group"
-          aria-label="Agrupación temporal"
-          className="flex h-[43px] rounded-lg border border-border overflow-hidden bg-card"
-        >
-          {AGRUPACION_OPTIONS.map((opt: Agrupacion) => {
-            const isActive = opt === agrupacion
-            return (
-              <button
-                key={opt}
-                type="button"
-                onClick={() => setAgrupacion(opt)}
-                aria-pressed={isActive}
-                className={cn(
-                  'px-4 text-sm font-semibold transition-colors duration-150',
-                  'border-r border-border last:border-r-0',
-                  isActive
-                    ? 'bg-primary text-white'
-                    : 'bg-card text-text-secondary hover:bg-primary/10 hover:text-text-primary'
-                )}
-                title={AGRUPACION_LABELS[opt]}
-              >
-                {AGRUPACION_LABELS[opt]}
-              </button>
-            )
-          })}
-        </div>
       </div>
 
       {/* Date Range Picker */}

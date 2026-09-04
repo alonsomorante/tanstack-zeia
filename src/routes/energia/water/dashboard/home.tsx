@@ -11,7 +11,7 @@ export const Route = createFileRoute('/energia/water/dashboard/home')({
       indicador: typeof search.indicador === 'string' ? search.indicador : undefined,
       agrupacion:
         typeof search.agrupacion === 'string' &&
-        (search.agrupacion === 'day' || search.agrupacion === 'hour')
+        ['30min', 'hour', 'day', 'week', 'month'].includes(search.agrupacion)
           ? search.agrupacion
           : undefined,
       desde: typeof search.desde === 'string' ? search.desde : undefined,

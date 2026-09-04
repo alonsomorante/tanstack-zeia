@@ -1,5 +1,6 @@
 import { LogOut } from 'lucide-react'
 import { useAuth } from '@/features/auth/hooks/use-auth'
+import { useResource } from '@/features/auth/hooks/use-resource'
 import { useRouter } from '@tanstack/react-router'
 import { resetEnergyAnalytics } from '@/lib/analytics'
 import { PeakPowerNotice } from './peak-power-notice'
@@ -8,6 +9,7 @@ import { ResourceSwitcher } from './resource-switcher'
 
 export function DashboardHeader() {
   const { logout } = useAuth()
+  const { resource } = useResource()
   const router = useRouter()
 
   const handleLogout = () => {
@@ -42,8 +44,8 @@ export function DashboardHeader() {
           {theme === 'light' ? <Moon className="w-4 h-4" /> : <Sun className="w-4 h-4" />}
         </button> */}
 
-        {/* Peak power notice */}
-        <PeakPowerNotice />
+        {/* Peak power notice (solo energía: el concepto no aplica a agua) */}
+        {resource === 'energy' && <PeakPowerNotice />}
 
         {/* Logout */}
         <button

@@ -5,7 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { WaterHomeFilters } from '../components/water-home-filters'
 import { WaterIndicatorGraph } from '../components/water-indicator-graph'
 import { WaterReadingsTable } from '../components/water-readings-table'
-import { useWaterHomeFilters } from '../hooks/use-water-home-filters'
+import { useWaterHomeFilters, AGRUPACION_LABELS } from '../hooks/use-water-home-filters'
 import { fetchWaterReadingsTable } from '../api/water-readings'
 import { downloadWaterReadingsReport } from '../api/water-download-report'
 import type { WaterReportFileFormat } from '../api/water-download-report'
@@ -26,6 +26,7 @@ export function WaterIndicatorAnalysisPage() {
     dateBefore,
     isReady,
     setPage,
+    setAgrupacion,
     measurementPoints,
   } = useWaterHomeFilters()
 
@@ -102,7 +103,9 @@ export function WaterIndicatorAnalysisPage() {
                 <CardDescription>
                   {agrupacion === 'day'
                     ? 'Consumo diario del punto de medición'
-                    : 'Consumo por hora del punto de medición'}
+                    : agrupacion === 'hour'
+                      ? 'Consumo por hora del punto de medición'
+                      : `Consumo por ${AGRUPACION_LABELS[agrupacion].toLowerCase()} del punto de medición`}
                 </CardDescription>
               </CardHeader>
               <CardContent className="min-h-[340px]">
@@ -114,6 +117,7 @@ export function WaterIndicatorAnalysisPage() {
                   dateBefore={dateBeforeStr}
                   indicador={indicador}
                   agrupacion={agrupacion}
+                  onAgrupacionChange={setAgrupacion}
                   isReady={isReady}
                 />
               </CardContent>
