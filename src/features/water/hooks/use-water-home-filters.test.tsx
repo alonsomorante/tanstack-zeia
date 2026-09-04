@@ -114,4 +114,38 @@ describe('useWaterHomeFilters', () => {
     expect(result.current.pagina).toBe(1)
     expect(navigateMock).not.toHaveBeenCalled()
   })
+
+  it('discards a measurement point from a previous session once points load', async () => {
+    searchState.sede = '199'
+    searchState.tuberia = '1'
+    searchState.punto = '999'
+    searchState.desde = '2026-08-01'
+    searchState.hasta = '2026-08-25'
+
+    const { result } = renderHook(() => useWaterHomeFilters(), { wrapper: createWrapper() })
+
+    await waitFor(() => {
+      expect(result.current.puntoId).toBe(1)
+    })
+
+    expect(result.current.isReady).toBe(true)
+  })
+
+  it('respects fine-grained agrupacion values from the URL', async () => {
+    searchState.sede = '199'
+    searchState.tuberia = '1'
+    searchState.punto = '2'
+    searchState.agrupacion = '30min'
+    searchState.desde = '2026-08-01'
+    searchState.hasta = '2026-08-25'
+
+    const { result } = renderHook(() => useWaterHomeFilters(), { wrapper: createWrapper() })
+
+    await waitFor(() => {
+      expect(result.current.isReady).toBe(true)
+    })
+
+    expect(result.current.agrupacion).toBe('30min')
+    expect(navigateMock).not.toHaveBeenCalled()
+  })
 })

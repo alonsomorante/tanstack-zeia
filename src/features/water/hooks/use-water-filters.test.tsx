@@ -83,4 +83,27 @@ describe('useWaterFilters', () => {
     expect(result.current.tuberiaId).toBe(1)
     expect(navigateMock).not.toHaveBeenCalled()
   })
+
+  it('replaces sede and pipe from a previous session with the current user defaults', async () => {
+    // IDs de la sesión anterior que no existen para el usuario actual.
+    searchState.sede = '9999'
+    searchState.tuberia = '8888'
+    searchState.desde = '2026-08-01'
+    searchState.hasta = '2026-08-25'
+
+    renderHook(() => useWaterFilters(), { wrapper: createWrapper() })
+
+    await waitFor(() => {
+      expect(navigateMock).toHaveBeenCalledWith(
+        expect.objectContaining({
+          search: expect.objectContaining({
+            sede: '199',
+            tuberia: '1',
+            desde: '2026-08-01',
+            hasta: '2026-08-25',
+          }),
+        })
+      )
+    })
+  })
 })

@@ -83,8 +83,8 @@ export function usePanelReadingsFilters() {
   const rawPuntoId = typeof search.mp_punto === 'string' ? Number(search.mp_punto) : null
 
   // Filtros de lecturas heredan de los filtros principales hasta que el usuario los modifica
-  const sedeId = rawSedeId ?? (typeof search.sede === 'string' ? Number(search.sede) : null)
-  const panelId = rawPanelId ?? (typeof search.panel === 'string' ? Number(search.panel) : null)
+  const mainSedeId = typeof search.sede === 'string' ? Number(search.sede) : null
+  const mainPanelId = typeof search.panel === 'string' ? Number(search.panel) : null
   const indicador: EnergyIndicatorKey = isEnergyIndicator(search.mp_indicador)
     ? search.mp_indicador
     : DEFAULT_INDICATOR
@@ -101,6 +101,14 @@ export function usePanelReadingsFilters() {
 
   const headquarters = useMemo(() => headquartersData?.results ?? [], [headquartersData])
 
+  // Descarta mp_sede de otra sesión: solo cuando ya cargaron las sedes
+  // (mientras cargan se conserva para no disparar fetches intermedios).
+  const rawSedeIsStale =
+    rawSedeId != null &&
+    headquarters.length > 0 &&
+    !headquarters.some((h) => h.id === rawSedeId)
+  const sedeId = rawSedeIsStale ? mainSedeId : (rawSedeId ?? mainSedeId)
+
   const currentHeadquarter = useMemo(() => {
     return headquarters.find((h) => h.id === sedeId) ?? null
   }, [headquarters, sedeId])
@@ -108,6 +116,11 @@ export function usePanelReadingsFilters() {
   const panels = useMemo(() => {
     return currentHeadquarter?.electrical_panels.filter((p) => p.is_active) ?? []
   }, [currentHeadquarter])
+
+  // Descarta mp_panel de otra sesión (solo cuando ya cargaron los paneles).
+  const rawPanelIsStale =
+    rawPanelId != null && panels.length > 0 && !panels.some((p) => p.id === rawPanelId)
+  const panelId = rawPanelIsStale ? mainPanelId : (rawPanelId ?? mainPanelId)
 
   const { data: measurementPointsData, isLoading: isLoadingMeasurementPoints } = useQuery({
     queryKey: ['device-measurement-points-list', sedeId, panelId],
@@ -122,8 +135,16 @@ export function usePanelReadingsFilters() {
     return measurementPointsData?.results.filter((mp) => mp.is_active) ?? []
   }, [measurementPointsData])
 
-  // Si no hay punto explícito en URL, usa el primer punto activo disponible
+  // Si no hay punto explícito en URL, usa el primer punto activo disponible.
+  // Descarta mp_punto de otra sesión una vez que cargan los puntos.
   const puntoId = useMemo(() => {
+    if (
+      rawPuntoId != null &&
+      measurementPoints.length > 0 &&
+      !measurementPoints.some((mp) => mp.id === rawPuntoId)
+    ) {
+      return measurementPoints[0]?.id ?? null
+    }
     return rawPuntoId ?? measurementPoints[0]?.id ?? null
   }, [rawPuntoId, measurementPoints])
 

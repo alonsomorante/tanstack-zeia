@@ -73,9 +73,8 @@ export function useWaterPanelReadingsFilters() {
   const rawPuntoId = typeof search.wmp_punto === 'string' ? Number(search.wmp_punto) : null
 
   // Filtros de lecturas heredan de los filtros principales hasta que el usuario los modifica
-  const sedeId = rawSedeId ?? (typeof search.sede === 'string' ? Number(search.sede) : null)
-  const tuberiaId =
-    rawTuberiaId ?? (typeof search.tuberia === 'string' ? Number(search.tuberia) : null)
+  const mainSedeId = typeof search.sede === 'string' ? Number(search.sede) : null
+  const mainTuberiaId = typeof search.tuberia === 'string' ? Number(search.tuberia) : null
   const indicador: WaterIndicator = isWaterIndicator(search.wmp_indicador)
     ? search.wmp_indicador
     : DEFAULT_WATER_INDICATOR
@@ -92,6 +91,14 @@ export function useWaterPanelReadingsFilters() {
 
   const headquarters = useMemo(() => headquartersData?.results ?? [], [headquartersData])
 
+  // Descarta wmp_sede de otra sesión: solo cuando ya cargaron las sedes
+  // (mientras cargan se conserva para no disparar fetches intermedios).
+  const rawSedeIsStale =
+    rawSedeId != null &&
+    headquarters.length > 0 &&
+    !headquarters.some((h) => h.id === rawSedeId)
+  const sedeId = rawSedeIsStale ? mainSedeId : (rawSedeId ?? mainSedeId)
+
   const currentHeadquarter = useMemo(() => {
     return headquarters.find((h) => h.id === sedeId) ?? null
   }, [headquarters, sedeId])
@@ -99,6 +106,11 @@ export function useWaterPanelReadingsFilters() {
   const pipes = useMemo(() => {
     return currentHeadquarter?.water_pipes.filter((p) => p.is_active) ?? []
   }, [currentHeadquarter])
+
+  // Descarta wmp_tuberia de otra sesión (solo cuando ya cargaron las tuberías).
+  const rawTuberiaIsStale =
+    rawTuberiaId != null && pipes.length > 0 && !pipes.some((p) => p.id === rawTuberiaId)
+  const tuberiaId = rawTuberiaIsStale ? mainTuberiaId : (rawTuberiaId ?? mainTuberiaId)
 
   const { data: measurementPointsData, isLoading: isLoadingMeasurementPoints } = useQuery({
     queryKey: ['water-measurement-points', sedeId, tuberiaId],
@@ -113,8 +125,16 @@ export function useWaterPanelReadingsFilters() {
     return measurementPointsData?.results.filter((mp) => mp.is_active) ?? []
   }, [measurementPointsData])
 
-  // Si no hay punto explícito en URL, usa el primer punto activo disponible
+  // Si no hay punto explícito en URL, usa el primer punto activo disponible.
+  // Descarta wmp_punto de otra sesión una vez que cargan los puntos.
   const puntoId = useMemo(() => {
+    if (
+      rawPuntoId != null &&
+      measurementPoints.length > 0 &&
+      !measurementPoints.some((mp) => mp.id === rawPuntoId)
+    ) {
+      return measurementPoints[0]?.id ?? null
+    }
     return rawPuntoId ?? measurementPoints[0]?.id ?? null
   }, [rawPuntoId, measurementPoints])
 

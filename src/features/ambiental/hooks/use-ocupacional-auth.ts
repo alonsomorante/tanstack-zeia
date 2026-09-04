@@ -1,5 +1,6 @@
 import { useCallback, useState } from 'react'
 import type { OcupacionalAuthResponse } from '@/features/auth/types'
+import { clearSessionCache } from '@/lib/query-client'
 
 const AUTH_STORAGE_KEY = 'zeia-ocupacional-auth'
 
@@ -23,6 +24,8 @@ export function useOcupacionalAuth() {
   const [auth, setAuthState] = useState<OcupacionalAuthState | null>(getStoredAuth)
 
   const setAuth = useCallback((data: OcupacionalAuthResponse) => {
+    // Evita que el siguiente usuario vea salas/sedes alertas de la sesión anterior.
+    clearSessionCache()
     const { token, ...user } = data
     const state: OcupacionalAuthState = { token, user }
     localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(state))
@@ -30,6 +33,7 @@ export function useOcupacionalAuth() {
   }, [])
 
   const logout = useCallback(() => {
+    clearSessionCache()
     localStorage.removeItem(AUTH_STORAGE_KEY)
     setAuthState(null)
   }, [])

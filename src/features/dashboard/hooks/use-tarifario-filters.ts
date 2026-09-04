@@ -21,13 +21,26 @@ export function useTarifarioFilters() {
   }, [headquarters, sedeId])
 
   const hasAutoSelected = useRef(false)
+  // Firma de las sedes cargadas: si cambia (ej. otro usuario/sesión),
+  // los filtros de la URL deben revalidarse en vez de respetarse a ciegas.
+  const lastHeadquartersKey = useRef<string | null>(null)
 
   useEffect(() => {
-    if (hasAutoSelected.current) return
     if (headquarters.length === 0) return
 
+    const headquartersKey = headquarters.map((h) => h.id).join(',')
+    if (lastHeadquartersKey.current !== headquartersKey) {
+      lastHeadquartersKey.current = headquartersKey
+      hasAutoSelected.current = false
+    }
+    if (hasAutoSelected.current) return
+
     const firstActiveSede = headquarters.find((h) => h.is_active) ?? headquarters[0]
-    const targetSedeId = sedeId ?? firstActiveSede?.id ?? null
+    // Ignora la sede de la URL si no pertenece al usuario actual (sesión anterior).
+    const targetSedeId =
+      sedeId != null && headquarters.some((h) => h.id === sedeId)
+        ? sedeId
+        : (firstActiveSede?.id ?? null)
 
     if (!targetSedeId) return
 

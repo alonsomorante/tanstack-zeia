@@ -77,21 +77,38 @@ export function useComparadorFilters() {
   }, [measurementPointsData])
 
   const hasAutoSelected = useRef(false)
+  // Firma de las sedes cargadas: si cambia (ej. otro usuario/sesión),
+  // los filtros de la URL deben revalidarse en vez de respetarse a ciegas.
+  const lastHeadquartersKey = useRef<string | null>(null)
   const hasAutoSelectedPunto = useRef(false)
   const lastPanelIdForPunto = useRef<number | null>(null)
 
   useEffect(() => {
-    if (hasAutoSelected.current) return
     if (headquarters.length === 0) return
 
+    const headquartersKey = headquarters.map((h) => h.id).join(',')
+    if (lastHeadquartersKey.current !== headquartersKey) {
+      lastHeadquartersKey.current = headquartersKey
+      hasAutoSelected.current = false
+    }
+    if (hasAutoSelected.current) return
+
     const firstActiveSede = headquarters.find((h) => h.is_active) ?? headquarters[0]
-    const targetSedeId = sedeId ?? firstActiveSede?.id ?? null
+    // Ignora la sede de la URL si no pertenece al usuario actual (sesión anterior).
+    const targetSedeId =
+      sedeId != null && headquarters.some((h) => h.id === sedeId)
+        ? sedeId
+        : (firstActiveSede?.id ?? null)
 
     if (!targetSedeId) return
 
     const targetHeadquarter = headquarters.find((h) => h.id === targetSedeId)
     const availablePanels = targetHeadquarter?.electrical_panels.filter((p) => p.is_active) ?? []
-    const targetPanelId = panelId ?? availablePanels[0]?.id ?? null
+    // Ignora el panel de la URL si no pertenece a la sede actual.
+    const targetPanelId =
+      panelId != null && availablePanels.some((p) => p.id === panelId)
+        ? panelId
+        : (availablePanels[0]?.id ?? null)
 
     const targetDateAfter = dateAfter ?? today
     const targetDateBefore = dateBefore ?? today
@@ -130,11 +147,14 @@ export function useComparadorFilters() {
       lastPanelIdForPunto.current = panelId
     }
 
-    if (hasAutoSelectedPunto.current) return
-    if (puntoId !== null) {
+    // Punto válido = existe en los puntos cargados (pueden ser de otra sesión).
+    const puntoIsValid =
+      puntoId != null && measurementPoints.some((mp) => mp.id === puntoId)
+    if (puntoIsValid) {
       hasAutoSelectedPunto.current = true
       return
     }
+    if (puntoId == null && hasAutoSelectedPunto.current) return
     if (measurementPoints.length === 0) return
 
     hasAutoSelectedPunto.current = true

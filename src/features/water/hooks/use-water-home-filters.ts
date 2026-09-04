@@ -7,12 +7,17 @@ import { isWaterIndicator, type WaterIndicator } from '../lib/indicators'
 import { formatDateISO, parseDateSafe } from '@/lib/date-utils'
 
 export const DEFAULT_WATER_HOME_INDICATOR: WaterIndicator = 'consumo_total_litros'
-export const AGRUPACION_OPTIONS = ['day', 'hour'] as const
+// Mismas granularidades gruesas que Análisis por Indicador de energía (el endpoint
+// readings/graph de agua acepta los mismos valores de `last_by`).
+export const AGRUPACION_OPTIONS = ['30min', 'hour', 'day', 'week', 'month'] as const
 export type Agrupacion = (typeof AGRUPACION_OPTIONS)[number]
 
 export const AGRUPACION_LABELS: Record<Agrupacion, string> = {
-  day: 'Día',
+  '30min': '30 minutos',
   hour: 'Hora',
+  day: 'Día',
+  week: 'Semana',
+  month: 'Mes',
 }
 
 function isAgrupacion(value: unknown): value is Agrupacion {
@@ -72,24 +77,47 @@ export function useWaterHomeFilters() {
     return measurementPointsData?.results.filter((mp) => mp.is_active) ?? []
   }, [measurementPointsData])
 
-  // Si no hay punto explícito en URL, usa el primer punto activo disponible
-  const puntoId = rawPuntoId ?? measurementPoints[0]?.id ?? null
+  // Si no hay punto explícito en URL, usa el primer punto activo disponible.
+  // Si el punto de la URL no existe en la tubería actual (ej. sesión anterior),
+  // se descarta y se usa el primero disponible una vez que cargan los puntos.
+  const puntoId =
+    rawPuntoId != null &&
+    (measurementPoints.length === 0 || measurementPoints.some((mp) => mp.id === rawPuntoId))
+      ? rawPuntoId
+      : (measurementPoints[0]?.id ?? null)
 
   // Auto-select: if URL is missing values, navigate to defaults
   const hasAutoSelected = useRef(false)
+  // Firma de las sedes cargadas: si cambia (ej. otro usuario/sesión),
+  // los filtros de la URL deben revalidarse en vez de respetarse a ciegas.
+  const lastHeadquartersKey = useRef<string | null>(null)
 
   useEffect(() => {
-    if (hasAutoSelected.current) return
     if (headquarters.length === 0) return
 
+    const headquartersKey = headquarters.map((h) => h.id).join(',')
+    if (lastHeadquartersKey.current !== headquartersKey) {
+      lastHeadquartersKey.current = headquartersKey
+      hasAutoSelected.current = false
+    }
+    if (hasAutoSelected.current) return
+
     const firstActiveSede = headquarters.find((h) => h.is_active) ?? headquarters[0]
-    const targetSedeId = sedeId ?? firstActiveSede?.id ?? null
+    // Ignora la sede de la URL si no pertenece al usuario actual (sesión anterior).
+    const targetSedeId =
+      sedeId != null && headquarters.some((h) => h.id === sedeId)
+        ? sedeId
+        : (firstActiveSede?.id ?? null)
 
     if (!targetSedeId) return
 
     const targetHeadquarter = headquarters.find((h) => h.id === targetSedeId)
     const availablePipes = targetHeadquarter?.water_pipes.filter((p) => p.is_active) ?? []
-    const targetTuberiaId = tuberiaId ?? availablePipes[0]?.id ?? null
+    // Ignora la tubería de la URL si no pertenece a la sede actual.
+    const targetTuberiaId =
+      tuberiaId != null && availablePipes.some((p) => p.id === tuberiaId)
+        ? tuberiaId
+        : (availablePipes[0]?.id ?? null)
 
     const targetDateAfter = dateAfter ?? today
     const targetDateBefore = dateBefore ?? today
@@ -102,12 +130,16 @@ export function useWaterHomeFilters() {
 
     if (needsNavigation) {
       hasAutoSelected.current = true
+      // Si la sede o tubería se corrigieron (ej. eran de otra sesión),
+      // el punto anterior ya no aplica: se resetea para derivar el primero.
+      const keepPunto =
+        sedeId === targetSedeId && tuberiaId === targetTuberiaId && rawPuntoId != null
       navigate({
         search: {
           sede: String(targetSedeId),
           tuberia: targetTuberiaId ? String(targetTuberiaId) : undefined,
           // El punto por defecto se deriva de los puntos cargados (no se navega)
-          punto: rawPuntoId ? String(rawPuntoId) : undefined,
+          punto: keepPunto ? String(rawPuntoId) : undefined,
           indicador,
           agrupacion,
           desde: formatDateISO(targetDateAfter),
