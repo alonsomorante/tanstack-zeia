@@ -61,7 +61,7 @@ Devuelve el consumo de agua del punto de medición **agrupado por fecha** (`YYYY
 | `date_after` | string | No | `YYYY-MM-DD` | Fecha de la 1ª lectura disponible | Fecha inicial (00:00:00 hora Perú). |
 | `date_before` | string | No | `YYYY-MM-DD` | Fecha de la última lectura disponible | Fecha final (23:59:59 hora Perú). |
 
-> ⚠️ **El indicador es FIJO**: este endpoint siempre devuelve `consumo_total_litros` (litros). **No existe el parámetro `indicador`** aquí (a diferencia de `readings/graph`), y no es necesario enviarlo.
+> ⚠️ **El indicador es FIJO**: este endpoint siempre devuelve `consumo_litros` (litros). **No existe el parámetro `indicador`** aquí (a diferencia de `readings/graph`), y no es necesario enviarlo.
 
 ### Lógica de Cálculo y Condiciones
 
@@ -76,7 +76,7 @@ Devuelve el consumo de agua del punto de medición **agrupado por fecha** (`YYYY
    - `is_average: true`
    - `sample_count`: cantidad de valores promediados (nº de fechas con datos en esa hora).
 6. **Zona horaria**: `date_after`/`date_before` se interpretan en hora local de Perú (`America/Lima`).
-7. **Unidad**: `unit` siempre es `"L"` e `indicator` siempre `"consumo_total_litros"`.
+7. **Unidad**: `unit` siempre es `"L"` e `indicator` siempre `"consumo_litros"`.
 
 ### Condiciones de Error
 
@@ -101,7 +101,7 @@ Cada entrada contiene: `time`, `indicator`, `unit`, `value`, `is_average`, `devi
     "2026-08-03": [
       {
         "time": "00:00:00",
-        "indicator": "consumo_total_litros",
+        "indicator": "consumo_litros",
         "unit": "L",
         "value": 55.68,
         "is_average": false,
@@ -110,7 +110,7 @@ Cada entrada contiene: `time`, `indicator`, `unit`, `value`, `is_average`, `devi
       },
       {
         "time": "01:00:00",
-        "indicator": "consumo_total_litros",
+        "indicator": "consumo_litros",
         "unit": "L",
         "value": 48.12,
         "is_average": false,
@@ -119,7 +119,7 @@ Cada entrada contiene: `time`, `indicator`, `unit`, `value`, `is_average`, `devi
       },
       {
         "time": "12:00:00",
-        "indicator": "consumo_total_litros",
+        "indicator": "consumo_litros",
         "unit": "L",
         "value": 142.75,
         "is_average": false,
@@ -132,7 +132,7 @@ Cada entrada contiene: `time`, `indicator`, `unit`, `value`, `is_average`, `devi
     "2026-08-04": [
       {
         "time": "00:00:00",
-        "indicator": "consumo_total_litros",
+        "indicator": "consumo_litros",
         "unit": "L",
         "value": 63.2,
         "is_average": false,
@@ -141,7 +141,7 @@ Cada entrada contiene: `time`, `indicator`, `unit`, `value`, `is_average`, `devi
       },
       {
         "time": "01:00:00",
-        "indicator": "consumo_total_litros",
+        "indicator": "consumo_litros",
         "unit": "L",
         "value": 51.9,
         "is_average": false,
@@ -150,7 +150,7 @@ Cada entrada contiene: `time`, `indicator`, `unit`, `value`, `is_average`, `devi
       },
       {
         "time": "12:00:00",
-        "indicator": "consumo_total_litros",
+        "indicator": "consumo_litros",
         "unit": "L",
         "value": 136.02,
         "is_average": false,
@@ -163,7 +163,7 @@ Cada entrada contiene: `time`, `indicator`, `unit`, `value`, `is_average`, `devi
     "habitual": [
       {
         "time": "00:00:00",
-        "indicator": "consumo_total_litros",
+        "indicator": "consumo_litros",
         "unit": "L",
         "value": 59.44,
         "is_average": true,
@@ -173,7 +173,7 @@ Cada entrada contiene: `time`, `indicator`, `unit`, `value`, `is_average`, `devi
       },
       {
         "time": "01:00:00",
-        "indicator": "consumo_total_litros",
+        "indicator": "consumo_litros",
         "unit": "L",
         "value": 50.01,
         "is_average": true,
@@ -183,7 +183,7 @@ Cada entrada contiene: `time`, `indicator`, `unit`, `value`, `is_average`, `devi
       },
       {
         "time": "12:00:00",
-        "indicator": "consumo_total_litros",
+        "indicator": "consumo_litros",
         "unit": "L",
         "value": 139.385,
         "is_average": true,
@@ -199,7 +199,7 @@ Cada entrada contiene: `time`, `indicator`, `unit`, `value`, `is_average`, `devi
 > **Nota**: Si solo hay 1 fecha con datos, o `last_by` no es `hour`, la respuesta no incluye la clave `habitual`. Ejemplo con `last_by=day` sin `habitual`:
 > ```json
 > [
->   { "2026-08-03": [ { "time": "00:00:00", "indicator": "consumo_total_litros", "unit": "L", "value": 1520.41, "is_average": false, "device": "24E124136C123456", "measurement_point": "Ingreso General de Red" } ] }
+>   { "2026-08-03": [ { "time": "00:00:00", "indicator": "consumo_litros", "unit": "L", "value": 1520.41, "is_average": false, "device": "24E124136C123456", "measurement_point": "Ingreso General de Red" } ] }
 > ]
 > ```
 

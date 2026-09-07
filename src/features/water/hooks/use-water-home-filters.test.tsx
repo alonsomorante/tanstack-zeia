@@ -69,7 +69,7 @@ describe('useWaterHomeFilters', () => {
             sede: '199',
             tuberia: '1',
             punto: undefined,
-            indicador: 'consumo_total_litros',
+            indicador: 'consumo_litros',
             agrupacion: 'day',
             desde: todayISO,
             hasta: todayISO,
@@ -109,7 +109,7 @@ describe('useWaterHomeFilters', () => {
     })
 
     expect(result.current.puntoId).toBe(2)
-    expect(result.current.indicador).toBe('consumo_total_litros')
+    expect(result.current.indicador).toBe('consumo_litros')
     expect(result.current.agrupacion).toBe('day')
     expect(result.current.pagina).toBe(1)
     expect(navigateMock).not.toHaveBeenCalled()

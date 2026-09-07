@@ -1,14 +1,14 @@
 export const WATER_INDICATORS = [
-  'consumo_total_litros',
-  'consumo_total_m3',
+  'consumo_litros',
+  'consumo_m3',
   'litros_por_pulso',
 ] as const
 
 export type WaterIndicator = (typeof WATER_INDICATORS)[number]
 
 export const WATER_INDICATOR_INFO: Record<WaterIndicator, { label: string; unit: string }> = {
-  consumo_total_litros: { label: 'Consumo total', unit: 'L' },
-  consumo_total_m3: { label: 'Consumo total', unit: 'm³' },
+  consumo_litros: { label: 'Consumo total', unit: 'L' },
+  consumo_m3: { label: 'Consumo total', unit: 'm³' },
   litros_por_pulso: { label: 'Litros por pulso', unit: 'L' },
 }
 

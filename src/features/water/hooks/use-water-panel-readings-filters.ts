@@ -5,7 +5,7 @@ import { fetchWaterHeadquarters } from '../api/water-headquarters'
 import { fetchWaterMeasurementPoints } from '../api/water-measurement-points'
 import { isWaterIndicator, type WaterIndicator } from '../lib/indicators'
 
-export const DEFAULT_WATER_INDICATOR: WaterIndicator = 'consumo_total_litros'
+export const DEFAULT_WATER_INDICATOR: WaterIndicator = 'consumo_litros'
 
 export const WEEKDAY_OPTIONS = ['weekdays', 'saturday', 'sunday'] as const
 export type Weekday = (typeof WEEKDAY_OPTIONS)[number]

@@ -6,7 +6,7 @@ import { fetchWaterMeasurementPoints } from '../api/water-measurement-points'
 import { isWaterIndicator, type WaterIndicator } from '../lib/indicators'
 import { formatDateISO, parseDateSafe } from '@/lib/date-utils'
 
-export const DEFAULT_WATER_HOME_INDICATOR: WaterIndicator = 'consumo_total_litros'
+export const DEFAULT_WATER_HOME_INDICATOR: WaterIndicator = 'consumo_litros'
 // Mismas granularidades gruesas que Análisis por Indicador de energía (el endpoint
 // readings/graph de agua acepta los mismos valores de `last_by`).
 export const AGRUPACION_OPTIONS = ['30min', 'hour', 'day', 'week', 'month'] as const

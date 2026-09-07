@@ -31,7 +31,7 @@ describe('fetchWaterReadingsTable', () => {
     })
 
     await fetchWaterReadingsTable(199, 1, 1, {
-      indicador: 'consumo_total_litros',
+      indicador: 'consumo_litros',
       dateAfter: '2026-08-01',
       dateBefore: '2026-08-30',
       hourAfter: '08:00',
@@ -41,7 +41,7 @@ describe('fetchWaterReadingsTable', () => {
     })
 
     expect(apiFetchSpy).toHaveBeenCalledWith(
-      '/headquarter/199/water_pipe/1/measurement_point_water/1/readings?indicador=consumo_total_litros&date_after=2026-08-01&date_before=2026-08-30&hour_after=08%3A00&hour_before=18%3A00&weekday=1%2C2%2C3%2C4%2C5&last_days=7'
+      '/headquarter/199/water_pipe/1/measurement_point_water/1/readings?indicador=consumo_litros&date_after=2026-08-01&date_before=2026-08-30&hour_after=08%3A00&hour_before=18%3A00&weekday=1%2C2%2C3%2C4%2C5&last_days=7'
     )
   })
 

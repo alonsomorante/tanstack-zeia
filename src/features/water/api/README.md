@@ -169,7 +169,7 @@ Returns aggregated time-series readings for a plot.
 - `measurement_point_id` (number, required)
 
 **Query params:**
-- `indicador` (string, default `consumo_total_litros`) — `consumo_total_litros` | `consumo_total_m3` | `litros_por_pulso`
+- `indicador` (string, default `consumo_litros`) — `consumo_litros` | `consumo_m3` | `litros_por_pulso`
 - `last_by` (string, default `day`) — `minute` | `15min` | `30min` | `hour` | `day` | `week` | `month`
 - `weekday` (string, optional, comma-separated) — ISO 8601 days (`1`=Monday … `7`=Sunday); omitted means all days
 - `date_after` / `date_before` (string) — format `YYYY-MM-DD`
@@ -206,7 +206,7 @@ Returns the paginated list of raw water readings for a measurement point (newest
 - `measurement_point_id` (number, required)
 
 **Query params (all optional):**
-- `indicador` (string) — `consumo_total_litros` | `consumo_total_m3` | `litros_por_pulso`; when omitted, `values` includes all three
+- `indicador` (string) — `consumo_litros` | `consumo_m3` | `litros_por_pulso`; when omitted, `values` includes all three
 - `date_after` / `date_before` (string) — format `YYYY-MM-DD` (evaluated in Peru time; `date_before` is exclusive, includes the whole day)
 - `hour_after` / `hour_before` (string) — e.g. `08:00`
 - `weekday` (string, comma-separated) — ISO 8601 days
@@ -253,7 +253,7 @@ Devuelve el consumo de agua del punto de medición **agrupado por fecha** (`YYYY
 - `weekday` (string, optional, comma-separated) — ISO 8601 days
 - `date_after` / `date_before` (string) — format `YYYY-MM-DD`
 
-> ⚠️ **El indicador es fijo**: siempre devuelve `consumo_total_litros` (litros). No existe el parámetro `indicador`.
+> ⚠️ **El indicador es fijo**: siempre devuelve `consumo_litros` (litros). No existe el parámetro `indicador`.
 
 **Response** (ver documentación completa externa en `WATER_DAY_COMPARISON_API.md`:
 

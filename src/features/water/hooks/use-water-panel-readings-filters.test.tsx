@@ -70,7 +70,7 @@ describe('useWaterPanelReadingsFilters', () => {
 
     expect(result.current.sedeId).toBe(199)
     expect(result.current.tuberiaId).toBe(1)
-    expect(result.current.indicador).toBe('consumo_total_litros')
+    expect(result.current.indicador).toBe('consumo_litros')
     expect(result.current.weekday).toBe('weekdays')
     expect(result.current.measurementPoints).toHaveLength(2)
     expect(result.current.isReady).toBe(true)
@@ -82,7 +82,7 @@ describe('useWaterPanelReadingsFilters', () => {
     searchState.wmp_sede = '199'
     searchState.wmp_tuberia = '1'
     searchState.wmp_punto = '2'
-    searchState.wmp_indicador = 'consumo_total_m3'
+    searchState.wmp_indicador = 'consumo_m3'
     searchState.wmp_weekday = 'saturday'
     searchState.wmp_anio = '2026'
     searchState.wmp_mes = '7'
@@ -96,7 +96,7 @@ describe('useWaterPanelReadingsFilters', () => {
     })
 
     expect(result.current.puntoId).toBe(2)
-    expect(result.current.indicador).toBe('consumo_total_m3')
+    expect(result.current.indicador).toBe('consumo_m3')
     expect(result.current.weekday).toBe('saturday')
     expect(result.current.monthRange).toEqual({ start: '2026-08-01', end: '2026-08-31' })
     expect(result.current.isReady).toBe(true)
