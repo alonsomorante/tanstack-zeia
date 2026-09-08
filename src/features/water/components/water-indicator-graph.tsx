@@ -20,6 +20,7 @@ import { ZeiaSelect } from '@/components/ui/select'
 import { fetchWaterReadingsGraph } from '@/features/water/api/water-readings-graph'
 import { formatDateShort } from '@/lib/date-utils'
 import { WATER_INDICATOR_INFO } from '@/features/water/lib/indicators'
+import { formatWaterTooltipTitle } from '@/features/water/lib/water-graph-labels'
 import { cn } from '@/lib/utils'
 import { AGRUPACION_LABELS, AGRUPACION_OPTIONS, type Agrupacion } from '../hooks/use-water-home-filters'
 import type { WaterIndicator } from '../lib/indicators'
@@ -165,10 +166,11 @@ export function WaterIndicatorGraph({
               const item = items[0]
               const results = data ?? []
               const raw = results[item?.dataIndex ?? 0]
-              return raw ? formatPeriodLabel(raw.period, agrupacion) : ''
+              return raw ? formatWaterTooltipTitle(raw, agrupacion) : ''
             },
             label: (context: TooltipItem<'line'>) => {
-              const value = context.raw as number
+              const value = context.raw as number | null
+              if (value === null || value === undefined) return `${indicatorInfo.label}: sin datos`
               return `${indicatorInfo.label}: ${formatValue(value)} ${indicatorInfo.unit}`
             },
           },
