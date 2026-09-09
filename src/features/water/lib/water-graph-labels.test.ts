@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { formatWaterTooltipTitle } from './water-graph-labels'
+import { formatWaterAxisLabel, formatWaterTooltipTitle } from './water-graph-labels'
 import type { WaterReadingGraphPoint } from '../types'
 
 function makePoint(overrides: Partial<WaterReadingGraphPoint>): WaterReadingGraphPoint {
@@ -62,5 +62,18 @@ describe('formatWaterTooltipTitle', () => {
     expect(title).toContain('31 de agosto')
     expect(title).toContain('6 de septiembre')
     expect(title).toContain('→')
+  })
+
+  it('día usa period aunque first_reading en UTC caiga el día anterior (eje 9 vs tooltip 8)', () => {
+    const point = makePoint({
+      period: '2026-09-09',
+      first_reading: '2026-09-09T00:00:00Z',
+      last_reading: '2026-09-09T23:59:00Z',
+    })
+    expect(formatWaterTooltipTitle(point, 'day')).toBe('9 de septiembre')
+    expect(formatWaterAxisLabel(point.period, 'day')).toBe('9 de septiembre')
+    expect(formatWaterAxisLabel(point.period, 'day')).toBe(
+      formatWaterTooltipTitle(point, 'day')
+    )
   })
 })
