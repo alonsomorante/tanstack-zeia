@@ -18,9 +18,8 @@ import zoomPlugin from 'chartjs-plugin-zoom'
 import { Activity, BarChart3, Clock, LineChart, ZoomOut } from 'lucide-react'
 import { ZeiaSelect } from '@/components/ui/select'
 import { fetchWaterReadingsGraph } from '@/features/water/api/water-readings-graph'
-import { formatDateShort } from '@/lib/date-utils'
 import { WATER_INDICATOR_INFO } from '@/features/water/lib/indicators'
-import { formatWaterTooltipTitle } from '@/features/water/lib/water-graph-labels'
+import { formatWaterAxisLabel, formatWaterTooltipTitle } from '@/features/water/lib/water-graph-labels'
 import { cn } from '@/lib/utils'
 import { AGRUPACION_LABELS, AGRUPACION_OPTIONS, type Agrupacion } from '../hooks/use-water-home-filters'
 import type { WaterIndicator } from '../lib/indicators'
@@ -49,11 +48,8 @@ interface WaterIndicatorGraphProps {
 }
 
 function formatPeriodLabel(period: string, agrupacion: Agrupacion): string {
-  // Granularidades gruesas => fecha corta; finas => hora:minuto (igual que energía).
-  if (agrupacion === 'day' || agrupacion === 'week' || agrupacion === 'month') {
-    return formatDateShort(period)
-  }
-  return period.includes('T') ? period.slice(11, 16) : period
+  // Fuente única con el tooltip (ver water-graph-labels): evita eje "9" vs tooltip "8".
+  return formatWaterAxisLabel(period, agrupacion)
 }
 
 function formatValue(value: number): string {
