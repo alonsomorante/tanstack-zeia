@@ -1,13 +1,7 @@
 import { Building2, Droplets, Activity } from 'lucide-react'
 import { ZeiaSelect } from '@/components/ui/select'
 import { DateRangePicker } from '@/components/ui/date-range-picker'
-import {
-  useWaterComparadorFilters,
-  AGRUPACION_OPTIONS,
-  AGRUPACION_LABELS,
-  type Agrupacion,
-} from '../hooks/use-water-comparador-filters'
-import { cn } from '@/lib/utils'
+import { useWaterComparadorFilters } from '../hooks/use-water-comparador-filters'
 
 export function WaterComparadorFilters() {
   const {
@@ -17,13 +11,11 @@ export function WaterComparadorFilters() {
     sedeId,
     tuberiaId,
     puntoId,
-    agrupacion,
     dateAfter,
     dateBefore,
     setSedeId,
     setTuberiaId,
     setPuntoId,
-    setAgrupacion,
     setDateRange,
     isLoadingHeadquarters,
     isLoadingMeasurementPoints,
@@ -96,38 +88,6 @@ export function WaterComparadorFilters() {
             icon={Activity}
           />
         )}
-      </div>
-
-      {/* Agrupación temporal */}
-      <div className="flex flex-col gap-1.5">
-        <label className="label-executive" style={{ color: '#88939b' }}>Agrupación</label>
-        <div
-          role="group"
-          aria-label="Agrupación temporal"
-          className="flex h-[43px] rounded-lg border border-border overflow-hidden bg-card"
-        >
-          {AGRUPACION_OPTIONS.map((opt: Agrupacion) => {
-            const isActive = opt === agrupacion
-            return (
-              <button
-                key={opt}
-                type="button"
-                onClick={() => setAgrupacion(opt)}
-                aria-pressed={isActive}
-                className={cn(
-                  'px-4 text-sm font-semibold transition-colors duration-150',
-                  'border-r border-border last:border-r-0',
-                  isActive
-                    ? 'bg-primary text-white'
-                    : 'bg-card text-text-secondary hover:bg-primary/10 hover:text-text-primary'
-                )}
-                title={AGRUPACION_LABELS[opt]}
-              >
-                {AGRUPACION_LABELS[opt]}
-              </button>
-            )
-          })}
-        </div>
       </div>
 
       {/* Date Range Picker */}
