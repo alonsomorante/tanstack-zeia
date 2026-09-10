@@ -502,12 +502,12 @@ Then I will reply with the list of sections registered for that module.
 
 | Module | Route | Sections |
 |--------|-------|----------|
-| Panel Dashboard | `/energia/dashboard/panel` | Filter Bar, KPI Row, Split View (Chart Section + Data List), Data Table |
+| Panel Dashboard | `/energia/dashboard/panel` | Tabs `?vista=` (Todos los tableros = default \| Por tablero). Todos los tableros: `AllPanelsHero` (total kWh sumado + promedio/día + top + conteo, sin metadata), `AllPanelsChart` (barras por tablero, pico en rojo), `AllPanelsDetail` (puntos del tablero con kWh y %) — fan-out de `consumption-distribution` por cada panel activo. Por tablero: Filter Bar, KPI Row, Split View (Chart Section + Data List), Data Table |
 | Análisis por Indicador | `/energia/dashboard/home` | Filter Bar, Split View (Readings Table + Readings Graph) |
 | Monitoreo de Potencia | `/energia/dashboard/monitoreo` | (pending) |
 | Desbalance de Carga | `/energia/dashboard/desbalance` | Filter Bar (Sede, Panel, Punto, Fechas), Top 3 Cards (Mayor desbalance del día), Corriente/Voltaje Toggle + `UnbalancedCountersGraph`, "Ver alertas" button |
 | Alertas de Desbalance | `/energia/dashboard/desbalance/alertas` | Filter Bar (Sede, Panel, Punto, Fechas), Tabla histórica filtrada a subtipo `current_unbalance` con selector de Fase A/B/C |
-| Consumo Tarifario | `/energia/dashboard/tarifario` | Filter Bar (solo sede), ~~Total Consumption Card~~ (comentada en la ruta), Billing Comparison (Split View: Costo total + Distribución de cargos + lista de cargos; selectores de período alimentados por `billing-cycles`, datos por ciclo vía `billing-calculate`), ~~Billing Cycle Table~~ (comentada en la ruta), Billing Detail Table (ciclo `is_current` de `billing-cycles` + `billing-calculate`) |
+| Consumo Tarifario | `/energia/dashboard/tarifario` | Filter Bar (solo sede), Tabs `?tab=` (Mensual = default \| Comparador). Tab Mensual: `MonthlyBillingHero` (total gigante + delta vs mes anterior + costo/día + ranking + pico, sin metadata de sede), `MonthlyBillingChart` (barras por ciclo, pico en rojo), `MonthlyBillingDetail` (solo ciclo + cargos con importes grandes). Tab Comparador: Billing Comparison (Split View: Costo total + Distribución de cargos + lista de cargos; selectores de período alimentados por `billing-cycles`, datos por ciclo vía `billing-calculate`), Billing Cycle Table, Billing Detail Table (ciclo `is_current` de `billing-cycles` + `billing-calculate`) |
 | Comparación por Día | `/energia/dashboard/comparador` | (pending) |
 | Alertas | `/energia/dashboard/alertas` | Filter Bar, Summary Card (panel name + today_count), Alerts Table (indicador, sub indicador, origen, fecha, hora, límite, valor) |
 

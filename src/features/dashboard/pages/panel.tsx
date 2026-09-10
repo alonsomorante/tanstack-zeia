@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
-import { Gauge, BarChart3 } from 'lucide-react'
+import { Gauge, BarChart3, Zap, LayoutGrid } from 'lucide-react'
 import { DashboardShell } from '@/features/dashboard/components/shell'
 import { DashboardFilters } from '@/features/dashboard/components/filters'
 import { useDashboardFilters } from '@/features/dashboard/hooks/use-dashboard-filters'
@@ -11,11 +11,14 @@ import { MeasurementPointsTable } from '@/features/dashboard/components/measurem
 import { PanelReadingsFilters } from '@/features/dashboard/components/panel-readings-filters'
 import { PanelReadingsChart } from '@/features/dashboard/components/panel-readings-chart'
 import { ScreenshotCard } from '@/features/dashboard/components/screenshot-card'
+import { AllPanelsView } from '@/features/dashboard/components/all-panels-view'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { formatDateISO, formatDateReadable } from '@/lib/date-utils'
+import { cn } from '@/lib/utils'
 
 export function PanelPage() {
-  const { sedeId, panelId, dateAfter, dateBefore, isReady } = useDashboardFilters()
+  const { sedeId, panelId, dateAfter, dateBefore, isReady, vista, setVista, currentHeadquarter } =
+    useDashboardFilters()
   const {
     sedeId: mpSedeId,
     panelId: mpPanelId,
@@ -55,6 +58,37 @@ export function PanelPage() {
           <DashboardFilters />
         </div>
 
+        <div className="flex w-fit items-center gap-1 rounded-lg border border-border bg-card p-1">
+          <button
+            type="button"
+            onClick={() => setVista('todos')}
+            className={cn(
+              'flex items-center gap-2 rounded-md px-4 py-2 text-sm font-medium transition-colors',
+              vista !== 'tablero'
+                ? 'bg-primary text-white shadow-soft'
+                : 'text-text-secondary hover:bg-secondary hover:text-text-primary'
+            )}
+          >
+            <LayoutGrid className="h-4 w-4" />
+            Todos los tableros
+          </button>
+          <button
+            type="button"
+            onClick={() => setVista('tablero')}
+            className={cn(
+              'flex items-center gap-2 rounded-md px-4 py-2 text-sm font-medium transition-colors',
+              vista === 'tablero'
+                ? 'bg-primary text-white shadow-soft'
+                : 'text-text-secondary hover:bg-secondary hover:text-text-primary'
+            )}
+          >
+            <Zap className="h-4 w-4" />
+            Por tablero
+          </button>
+        </div>
+
+        {vista === 'tablero' ? (
+          <>
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-2">
           {/* Card 1: Puntos de Medición (estándar) */}
           <Card>
@@ -209,6 +243,21 @@ export function PanelPage() {
             </CardContent>
           </Card>
         </ScreenshotCard>
+          </>
+        ) : sedeId != null && dateAfterStr && dateBeforeStr ? (
+          <AllPanelsView
+            sedeId={sedeId}
+            sedeName={currentHeadquarter?.name ?? ''}
+            dateAfterStr={dateAfterStr}
+            dateBeforeStr={dateBeforeStr}
+          />
+        ) : (
+          <Card>
+            <CardContent className="flex h-[200px] items-center justify-center text-text-muted">
+              <p>Seleccione sede y fechas para ver el consumo de todos los tableros</p>
+            </CardContent>
+          </Card>
+        )}
       </div>
     </DashboardShell>
   )

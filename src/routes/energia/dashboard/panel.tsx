@@ -7,6 +7,7 @@ export const Route = createFileRoute('/energia/dashboard/panel')({
     return {
       sede: typeof search.sede === 'string' ? search.sede : undefined,
       panel: typeof search.panel === 'string' ? search.panel : undefined,
+      vista: search.vista === 'todos' || search.vista === 'tablero' ? search.vista : undefined,
       desde: typeof search.desde === 'string' ? search.desde : undefined,
       hasta: typeof search.hasta === 'string' ? search.hasta : undefined,
       mp_sede: typeof search.mp_sede === 'string' ? search.mp_sede : undefined,

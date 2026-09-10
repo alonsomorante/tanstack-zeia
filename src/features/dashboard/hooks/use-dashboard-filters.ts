@@ -11,6 +11,7 @@ export function useDashboardFilters() {
   // Read ALL state directly from URL — single source of truth
   const sedeId = typeof search.sede === 'string' ? Number(search.sede) : null
   const panelId = typeof search.panel === 'string' ? Number(search.panel) : null
+  const vista = search.vista === 'tablero' ? 'tablero' : 'todos'
   const dateAfter = parseDateSafe(typeof search.desde === 'string' ? search.desde : undefined)
   const dateBefore = parseDateSafe(typeof search.hasta === 'string' ? search.hasta : undefined)
 
@@ -81,6 +82,7 @@ export function useDashboardFilters() {
         search: {
           sede: String(targetSedeId),
           panel: targetPanelId ? String(targetPanelId) : undefined,
+          vista: search.vista,
           desde: formatDateISO(targetDateAfter),
           hasta: formatDateISO(targetDateBefore),
           mp_sede: search.mp_sede,
@@ -103,6 +105,7 @@ export function useDashboardFilters() {
     dateBefore,
     today,
     navigate,
+    search.vista,
     search.mp_sede,
     search.mp_panel,
     search.mp_punto,
@@ -119,6 +122,7 @@ export function useDashboardFilters() {
         search: {
           sede: String(id),
           panel: undefined, // Reset panel when sede changes
+          vista: search.vista,
           desde: formatDateISO(dateAfter ?? today),
           hasta: formatDateISO(dateBefore ?? today),
           mp_sede: search.mp_sede,
@@ -133,7 +137,7 @@ export function useDashboardFilters() {
         hashScrollIntoView: false,
       })
     },
-    [navigate, dateAfter, dateBefore, today, search.mp_sede, search.mp_panel, search.mp_punto, search.mp_indicador, search.mp_weekday, search.mp_anio, search.mp_mes]
+    [navigate, dateAfter, dateBefore, today, search.vista, search.mp_sede, search.mp_panel, search.mp_punto, search.mp_indicador, search.mp_weekday, search.mp_anio, search.mp_mes]
   )
 
   const setPanelId = useCallback(
@@ -142,6 +146,7 @@ export function useDashboardFilters() {
         search: {
           sede: String(sedeId),
           panel: String(id),
+          vista: search.vista,
           desde: formatDateISO(dateAfter ?? today),
           hasta: formatDateISO(dateBefore ?? today),
           mp_sede: search.mp_sede,
@@ -156,7 +161,7 @@ export function useDashboardFilters() {
         hashScrollIntoView: false,
       })
     },
-    [navigate, sedeId, dateAfter, dateBefore, today, search.mp_sede, search.mp_panel, search.mp_punto, search.mp_indicador, search.mp_weekday, search.mp_anio, search.mp_mes]
+    [navigate, sedeId, dateAfter, dateBefore, today, search.vista, search.mp_sede, search.mp_panel, search.mp_punto, search.mp_indicador, search.mp_weekday, search.mp_anio, search.mp_mes]
   )
 
   const setDateRange = useCallback(
@@ -165,6 +170,7 @@ export function useDashboardFilters() {
         search: {
           sede: String(sedeId),
           panel: panelId ? String(panelId) : undefined,
+          vista: search.vista,
           desde: formatDateISO(range.startDate),
           hasta: formatDateISO(range.endDate),
           mp_sede: search.mp_sede,
@@ -179,7 +185,19 @@ export function useDashboardFilters() {
         hashScrollIntoView: false,
       })
     },
-    [navigate, sedeId, panelId, search.mp_sede, search.mp_panel, search.mp_punto, search.mp_indicador, search.mp_weekday, search.mp_anio, search.mp_mes]
+    [navigate, sedeId, panelId, search.vista, search.mp_sede, search.mp_panel, search.mp_punto, search.mp_indicador, search.mp_weekday, search.mp_anio, search.mp_mes]
+  )
+
+  const setVista = useCallback(
+    (next: 'tablero' | 'todos') => {
+      navigate({
+        search: (prev) => ({
+          ...prev,
+          vista: next === 'tablero' ? 'tablero' : undefined,
+        }),
+      })
+    },
+    [navigate]
   )
 
   const currentPanel = useMemo(() => {
@@ -198,6 +216,7 @@ export function useDashboardFilters() {
     // State (from URL)
     sedeId,
     panelId,
+    vista,
     dateAfter,
     dateBefore,
 
@@ -205,6 +224,7 @@ export function useDashboardFilters() {
     setSedeId,
     setPanelId,
     setDateRange,
+    setVista,
 
     // Status
     isLoadingHeadquarters,
