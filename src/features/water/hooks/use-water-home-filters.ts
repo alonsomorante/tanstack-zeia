@@ -3,7 +3,7 @@ import { useSearch, useNavigate } from '@tanstack/react-router'
 import { useQuery } from '@tanstack/react-query'
 import { fetchWaterHeadquarters } from '../api/water-headquarters'
 import { fetchWaterMeasurementPoints } from '../api/water-measurement-points'
-import { isWaterIndicator, type WaterIndicator } from '../lib/indicators'
+import { isVisibleWaterIndicator, type WaterIndicator } from '../lib/indicators'
 import { formatDateISO, parseDateSafe } from '@/lib/date-utils'
 
 export const DEFAULT_WATER_HOME_INDICATOR: WaterIndicator = 'consumo_litros'
@@ -38,7 +38,7 @@ export function useWaterHomeFilters() {
   const sedeId = typeof search.sede === 'string' ? Number(search.sede) : null
   const tuberiaId = typeof search.tuberia === 'string' ? Number(search.tuberia) : null
   const rawPuntoId = typeof search.punto === 'string' ? Number(search.punto) : null
-  const indicador: WaterIndicator = isWaterIndicator(search.indicador)
+  const indicador: WaterIndicator = isVisibleWaterIndicator(search.indicador)
     ? search.indicador
     : DEFAULT_WATER_HOME_INDICATOR
   const agrupacion: Agrupacion = isAgrupacion(search.agrupacion) ? search.agrupacion : 'day'

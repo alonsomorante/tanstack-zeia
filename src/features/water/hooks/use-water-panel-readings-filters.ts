@@ -3,7 +3,7 @@ import { useSearch, useNavigate } from '@tanstack/react-router'
 import { useQuery } from '@tanstack/react-query'
 import { fetchWaterHeadquarters } from '../api/water-headquarters'
 import { fetchWaterMeasurementPoints } from '../api/water-measurement-points'
-import { isWaterIndicator, type WaterIndicator } from '../lib/indicators'
+import { isVisibleWaterIndicator, type WaterIndicator } from '../lib/indicators'
 
 export const DEFAULT_WATER_INDICATOR: WaterIndicator = 'consumo_litros'
 
@@ -75,7 +75,7 @@ export function useWaterPanelReadingsFilters() {
   // Filtros de lecturas heredan de los filtros principales hasta que el usuario los modifica
   const mainSedeId = typeof search.sede === 'string' ? Number(search.sede) : null
   const mainTuberiaId = typeof search.tuberia === 'string' ? Number(search.tuberia) : null
-  const indicador: WaterIndicator = isWaterIndicator(search.wmp_indicador)
+  const indicador: WaterIndicator = isVisibleWaterIndicator(search.wmp_indicador)
     ? search.wmp_indicador
     : DEFAULT_WATER_INDICATOR
   const weekday: Weekday = isWeekday(search.wmp_weekday) ? search.wmp_weekday : 'weekdays'

@@ -5,16 +5,11 @@ import { fetchWaterHeadquarters } from '../api/water-headquarters'
 import { fetchWaterMeasurementPoints } from '../api/water-measurement-points'
 import { formatDateISO, parseDateSafe } from '@/lib/date-utils'
 
-export const AGRUPACION_OPTIONS = ['day', 'hour'] as const
+export const AGRUPACION_OPTIONS = ['hour'] as const
 export type Agrupacion = (typeof AGRUPACION_OPTIONS)[number]
 
 export const AGRUPACION_LABELS: Record<Agrupacion, string> = {
-  day: 'Día',
   hour: 'Hora',
-}
-
-function isAgrupacion(value: unknown): value is Agrupacion {
-  return typeof value === 'string' && (AGRUPACION_OPTIONS as readonly string[]).includes(value)
 }
 
 export function useWaterComparadorFilters() {
@@ -22,10 +17,11 @@ export function useWaterComparadorFilters() {
   const search = useSearch({ from: '/energia/water/dashboard/comparador' })
 
   // Read ALL state directly from URL — single source of truth
+  // La agrupación está fija en hora (sin switch en la UI).
   const sedeId = typeof search.sede === 'string' ? Number(search.sede) : null
   const tuberiaId = typeof search.tuberia === 'string' ? Number(search.tuberia) : null
   const rawPuntoId = typeof search.punto === 'string' ? Number(search.punto) : null
-  const agrupacion: Agrupacion = isAgrupacion(search.agrupacion) ? search.agrupacion : 'hour'
+  const agrupacion: Agrupacion = 'hour'
   const dateAfter = parseDateSafe(typeof search.desde === 'string' ? search.desde : undefined)
   const dateBefore = parseDateSafe(typeof search.hasta === 'string' ? search.hasta : undefined)
 
@@ -123,7 +119,6 @@ export function useWaterComparadorFilters() {
           tuberia: targetTuberiaId ? String(targetTuberiaId) : undefined,
           // El punto por defecto se deriva de los puntos cargados (no se navega)
           punto: keepPunto ? String(rawPuntoId) : undefined,
-          agrupacion,
           desde: formatDateISO(targetDateAfter),
           hasta: formatDateISO(targetDateBefore),
         },
@@ -136,7 +131,6 @@ export function useWaterComparadorFilters() {
     sedeId,
     tuberiaId,
     rawPuntoId,
-    agrupacion,
     dateAfter,
     dateBefore,
     today,
@@ -151,7 +145,6 @@ export function useWaterComparadorFilters() {
           sede: String(id),
           tuberia: undefined, // Reset pipe when sede changes
           punto: undefined, // Reset point when sede changes
-          agrupacion,
           desde: formatDateISO(dateAfter ?? today),
           hasta: formatDateISO(dateBefore ?? today),
         },
@@ -159,7 +152,7 @@ export function useWaterComparadorFilters() {
         hashScrollIntoView: false,
       })
     },
-    [navigate, agrupacion, dateAfter, dateBefore, today]
+    [navigate, dateAfter, dateBefore, today]
   )
 
   const setTuberiaId = useCallback(
@@ -169,7 +162,6 @@ export function useWaterComparadorFilters() {
           sede: String(sedeId),
           tuberia: String(id),
           punto: undefined, // Reset point when pipe changes
-          agrupacion,
           desde: formatDateISO(dateAfter ?? today),
           hasta: formatDateISO(dateBefore ?? today),
         },
@@ -177,7 +169,7 @@ export function useWaterComparadorFilters() {
         hashScrollIntoView: false,
       })
     },
-    [navigate, sedeId, agrupacion, dateAfter, dateBefore, today]
+    [navigate, sedeId, dateAfter, dateBefore, today]
   )
 
   const setPuntoId = useCallback(
@@ -187,7 +179,6 @@ export function useWaterComparadorFilters() {
           sede: String(sedeId),
           tuberia: String(tuberiaId),
           punto: String(id),
-          agrupacion,
           desde: formatDateISO(dateAfter ?? today),
           hasta: formatDateISO(dateBefore ?? today),
         },
@@ -195,25 +186,7 @@ export function useWaterComparadorFilters() {
         hashScrollIntoView: false,
       })
     },
-    [navigate, sedeId, tuberiaId, agrupacion, dateAfter, dateBefore, today]
-  )
-
-  const setAgrupacion = useCallback(
-    (value: Agrupacion) => {
-      navigate({
-        search: {
-          sede: String(sedeId),
-          tuberia: tuberiaId ? String(tuberiaId) : undefined,
-          punto: puntoId ? String(puntoId) : undefined,
-          agrupacion: value,
-          desde: formatDateISO(dateAfter ?? today),
-          hasta: formatDateISO(dateBefore ?? today),
-        },
-        resetScroll: false,
-        hashScrollIntoView: false,
-      })
-    },
-    [navigate, sedeId, tuberiaId, puntoId, dateAfter, dateBefore, today]
+    [navigate, sedeId, tuberiaId, dateAfter, dateBefore, today]
   )
 
   const setDateRange = useCallback(
@@ -223,7 +196,6 @@ export function useWaterComparadorFilters() {
           sede: String(sedeId),
           tuberia: tuberiaId ? String(tuberiaId) : undefined,
           punto: puntoId ? String(puntoId) : undefined,
-          agrupacion,
           desde: formatDateISO(range.startDate),
           hasta: formatDateISO(range.endDate),
         },
@@ -231,7 +203,7 @@ export function useWaterComparadorFilters() {
         hashScrollIntoView: false,
       })
     },
-    [navigate, sedeId, tuberiaId, puntoId, agrupacion]
+    [navigate, sedeId, tuberiaId, puntoId]
   )
 
   const isReady = !!sedeId && !!tuberiaId && !!puntoId && !!dateAfter && !!dateBefore
@@ -255,7 +227,6 @@ export function useWaterComparadorFilters() {
     setSedeId,
     setTuberiaId,
     setPuntoId,
-    setAgrupacion,
     setDateRange,
 
     // Status

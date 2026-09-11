@@ -69,7 +69,6 @@ describe('useWaterComparadorFilters', () => {
             sede: '199',
             tuberia: '1',
             punto: undefined,
-            agrupacion: 'hour',
             desde: todayISO,
             hasta: todayISO,
           },
@@ -93,7 +92,7 @@ describe('useWaterComparadorFilters', () => {
     expect(result.current.isReady).toBe(true)
   })
 
-  it('is ready with explicit URL params and defaults agrupacion to hour', async () => {
+  it('is ready with explicit URL params and fixed hourly agrupacion', async () => {
     searchState.sede = '199'
     searchState.tuberia = '1'
     searchState.punto = '2'

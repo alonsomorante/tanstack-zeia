@@ -10,7 +10,6 @@ export function WaterDayComparisonPage() {
     sedeId,
     tuberiaId,
     puntoId,
-    agrupacion,
     dateAfter,
     dateBefore,
     isReady,
@@ -40,9 +39,7 @@ export function WaterDayComparisonPage() {
                 : 'Comparación de consumo de agua'}
             </CardTitle>
             <CardDescription>
-              {agrupacion === 'hour'
-                ? 'Consumo por hora de cada día seleccionado, con el perfil promedio habitual'
-                : 'Consumo diario de cada fecha seleccionada'}
+              Consumo por hora de cada día seleccionado, con el perfil promedio habitual
             </CardDescription>
           </CardHeader>
           <CardContent className="min-h-[300px]">
@@ -53,7 +50,7 @@ export function WaterDayComparisonPage() {
                 measurementPointId={puntoId}
                 dateAfter={dateAfterStr}
                 dateBefore={dateBeforeStr}
-                agrupacion={agrupacion}
+                agrupacion="hour"
                 isReady={isChartReady}
               />
             ) : (
