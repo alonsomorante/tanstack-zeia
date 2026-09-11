@@ -1,4 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
+import type { ReactNode } from 'react'
 import { render, screen, waitFor } from '@testing-library/react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import userEvent from '@testing-library/user-event'
@@ -23,6 +24,7 @@ Object.defineProperty(window, 'matchMedia', {
 let mockSearch: Record<string, string | undefined> = {
   sede: '67',
   panel: '34',
+  vista: 'tablero',
   desde: '2026-05-25',
   hasta: '2026-05-25',
 }
@@ -43,6 +45,7 @@ vi.mock('@tanstack/react-router', async () => {
     createFileRoute: () => () => ({
       component: () => null,
     }),
+    Link: ({ children }: { children: ReactNode }) => <a>{children}</a>,
     useNavigate: () => mockNavigate,
     useSearch: () => mockSearch,
     useRouter: () => ({
@@ -238,6 +241,7 @@ describe('PanelPage', () => {
     mockSearch = {
       sede: '67',
       panel: '34',
+      vista: 'tablero',
       desde: '2026-05-25',
       hasta: '2026-05-25',
     }
@@ -270,7 +274,8 @@ describe('PanelPage', () => {
 
     unmount()
 
-    // Re-render with updated URL to verify data loads with auto-selected filters
+    // Re-render with updated URL (+ vista explícita) to verify data loads with auto-selected filters
+    mockSearch.vista = 'tablero'
     function createWrapperEmpty() {
       const queryClient = new QueryClient({
         defaultOptions: {
@@ -325,6 +330,15 @@ describe('PanelPage', () => {
           search: expect.objectContaining({ panel: '39' }),
         })
       )
+    })
+  })
+
+  it('muestra Todos los tableros por defecto cuando no hay vista en la URL', async () => {
+    delete mockSearch.vista
+    render(<PanelPage />, { wrapper: createWrapper() })
+
+    await waitFor(() => {
+      expect(screen.getByText(/Esta sede consume/)).toBeInTheDocument()
     })
   })
 

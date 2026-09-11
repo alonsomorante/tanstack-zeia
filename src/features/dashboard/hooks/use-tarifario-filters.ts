@@ -8,6 +8,7 @@ export function useTarifarioFilters() {
   const search = useSearch({ from: '/energia/dashboard/tarifario' })
 
   const sedeId = typeof search.sede === 'string' ? Number(search.sede) : null
+  const tab = search.tab === 'comparador' ? 'comparador' : 'mensual'
 
   const { data: headquartersData, isLoading: isLoadingHeadquarters } = useQuery({
     queryKey: ['headquarters'],
@@ -49,17 +50,31 @@ export function useTarifarioFilters() {
       navigate({
         search: {
           sede: String(targetSedeId),
+          tab: search.tab,
         },
       })
     }
-  }, [headquarters, sedeId, navigate])
+  }, [headquarters, sedeId, navigate, search.tab])
 
   const setSedeId = useCallback(
     (id: number) => {
       navigate({
-        search: {
+        search: (prev) => ({
+          ...prev,
           sede: String(id),
-        },
+        }),
+      })
+    },
+    [navigate]
+  )
+
+  const setTab = useCallback(
+    (next: 'comparador' | 'mensual') => {
+      navigate({
+        search: (prev) => ({
+          ...prev,
+          tab: next === 'comparador' ? 'comparador' : undefined,
+        }),
       })
     },
     [navigate]
@@ -72,6 +87,8 @@ export function useTarifarioFilters() {
     currentHeadquarter,
     sedeId,
     setSedeId,
+    tab,
+    setTab,
     isLoadingHeadquarters,
     isReady,
   }
