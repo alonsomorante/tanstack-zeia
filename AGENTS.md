@@ -113,6 +113,7 @@ All energy-related routes use the `/energia/` prefix (matching the API response)
 | `/energia/dashboard/tarifario` | `src/routes/energia/dashboard/tarifario.tsx` | Consumo Tarifario |
 | `/energia/dashboard/comparador` | `src/routes/energia/dashboard/comparador.tsx` | Comparación por Día |
 | `/energia/dashboard/alertas` | `src/routes/energia/dashboard/alertas.tsx` | Alertas |
+| `/energia/dashboard/mapa` | `src/routes/energia/dashboard/mapa.tsx` | Mapa de Red: inicio de energía tras el login (topología sede → tableros → puntos con capas de consumo, potencia y desbalance) |
 
 **Note**: The old routes `/login`, `/dashboard/*` have been REMOVED.
 
@@ -132,6 +133,9 @@ function MyPage() {
 
 `DashboardShell` renders: Header + Sidebar + Main content area
 
+- The shell has a fixed height (`h-dvh`): `<main>` is the scroll container, so `sticky` elements inside a page work (the map's detail panel and compare bar rely on it).
+- `showSidebar={false}` hides the sidebar for full-width screens. Only the Mapa de Red uses it; it renders `ModulesMenu` (`src/features/dashboard/components/modules-menu.tsx`), a "Módulos" dropdown with the same links as the sidebar (`SidebarNav`), so every module stays reachable.
+
 ### 5. Authentication Flow
 ```
 User clicks "Acceder al Sistema" on /
@@ -139,17 +143,20 @@ User clicks "Acceder al Sistema" on /
   → enters email + password
   → POST to https://api.energy.zeia.com.pe/api/v1/accounts/request-token/
   → on success: saves { token, user } to localStorage (key: 'zeia-auth')
-  → redirects to first energy_modules child URL from API response
+  → redirects to /energia/dashboard/mapa (Mapa de Red) if the user has energy enabled;
+    otherwise to the first module URL from the API response (getDefaultLandingUrl)
   → DashboardShell renders with sidebar from user.energy_modules
 ```
 
 ### 6. Dynamic Sidebar from API Response
-The sidebar is **100% dynamic** based on the login API response.
+The sidebar is **dynamic** based on the login API response (with one exception, below).
 - `user.energy_modules` contains the navigation structure
 - Each module has `name`, `url`, `icon` (base64 SVG), `is_active`, and `children[]`
 - The sidebar renders these modules and their children automatically
 - Icons are base64 SVG strings decoded and rendered with `dangerouslySetInnerHTML`
 - Active state is determined by comparing `currentPath` with each link's `url`
+- **Exception:** for the energy resource the sidebar prepends a static "Mapa de Red" link (`ENERGY_HOME_URL`) while the backend does not send `energia/dashboard/mapa` in `energy_modules`. If the backend adds it, the static link is not shown (no duplicates).
+- The link list lives in `SidebarNav` (exported from `sidebar.tsx`); the sidebar and the map's "Módulos" menu both render it.
 
 ### 7. Theme System
 - **Light mode** is default
@@ -518,6 +525,7 @@ Then I will reply with the list of sections registered for that module.
 | Consumo Tarifario | `/energia/dashboard/tarifario` | Filter Bar (solo sede), Tabs `?tab=` (Mensual = default \| Comparador). Tab Mensual: `MonthlyBillingHero` (total gigante + delta vs mes anterior + costo/día + ranking + pico, sin metadata de sede), `MonthlyBillingChart` (barras por ciclo, pico en rojo), `MonthlyBillingDetail` (solo ciclo + cargos con importes grandes). Tab Comparador: Billing Comparison (Split View: Costo total + Distribución de cargos + lista de cargos; selectores de período alimentados por `billing-cycles`, datos por ciclo vía `billing-calculate`), Billing Cycle Table, Billing Detail Table (ciclo `is_current` de `billing-cycles` + `billing-calculate`) |
 | Comparación por Día | `/energia/dashboard/comparador` | (pending) |
 | Alertas | `/energia/dashboard/alertas` | Filter Bar, Summary Card (panel name + today_count), Alerts Table (indicador, sub indicador, origen, fecha, hora, límite, valor) |
+| Mapa de Red (inicio de energía) | `/energia/dashboard/mapa` | Pantalla de llegada tras el login (`getDefaultLandingUrl`) y al cambiar a Energía (`getResourceHomeUrl`); enlace fijo "Mapa de Red" en el sidebar mientras no venga en `energy_modules`. Sin sidebar (`DashboardShell showSidebar={false}`): menú «Módulos» (`ModulesMenu`) junto al título; el detalle va al lado del mapa desde 1160 px de ancho. Todo el estado en la URL: `sede`, `periodo` (Hoy = default \| `7d` \| `mes` \| `ciclo` = ciclo de facturación vigente de `billing-cycles` \| `custom` + `desde`/`hasta`), `capa` (Consumo = default \| `potencia` \| `desbalance`), `tablero` + `punto` (selección; `punto=otras` = otras cargas) y `comparar` (ids, máx. 6). Sin selects: sede en botones (selector si hay más de 6), tablero/punto = clic en el mapa. Secciones: Filter Bar (sede + período), Diagrama (`NetworkMapDiagram`: sede → tableros → puntos; cada capa recalcula cifra, color y grosor vía `buildLayerView` en `lib/network-layers.ts`; botón «Comparar puntos» = modo comparar: un clic en un punto lo agrega o lo quita, casilla y borde con el color del punto, sin atenuar tableros; el modo también se activa si la URL trae `comparar`) + `NetworkCompareTray` (visible durante todo el modo, con la instrucción y «Salir»), Inspector (`NetworkMapInspector`: sede = consumo, potencia [pico, % contratada, tiempo sobre ella, hora punta 18–23, punto que más aportaba], top 3 de desbalance, ranking; tablero = lo mismo acotado; punto = botones «Comparar días» y «Comparar con otros puntos» arriba, "Ahora" [última lectura de P/V/I vs umbrales, se refresca cada minuto], hoy vs mismo día de las 4 semanas anteriores [`graph-especific` 5 semanas] o consumo por día, potencia vs su límite, desbalance [conteos, fases R/S/T del último evento, tira por día], alertas de hoy [5 categorías], medidor y foto). Detalle a pedido en paneles laterales (`NetworkDrawer`): Lecturas (`ReadingsGraph` + `ReadingsTable`), Curva de potencia (demanda de la sede vs contratada + franja de hora punta), Eventos de desbalance (`UnbalancedCountersGraph` + `ImbalancedEventsTable`), Comparar días (presets + calendario de 5 semanas coloreado por kWh, hasta 8 días) y Comparar puntos (tabla + curvas). Datos de sede: `consumption-distribution` por tablero, `/measurement-points/`, `powers/graph` (por minuto si es 1 día, por hora hasta 62 días), `most-three-unbalanced`, `billing-cycles`; umbrales por punto vía `devices/measurement-points/list` |
 
 > **Note:** `(pending)` modules have no sections yet. They will be filled as they are built via `@Z-MOD`.
 
@@ -1091,7 +1099,7 @@ This updates `src/routeTree.gen.ts` automatically.
 1. **NEVER** manually edit `src/routeTree.gen.ts` — it is auto-generated
 2. **This is a SPA** — no SSR, no server functions, no `@tanstack/react-start`
 3. **Routes must use `/energia/` prefix** — matches the API response URLs
-4. **Sidebar is 100% dynamic** — driven by `user.energy_modules` from login response
+4. **Sidebar is dynamic** — driven by `user.energy_modules` from login response, plus the static "Mapa de Red" link for energy (see section 6)
 5. **Use the skills** — Check `.agents/skills/` before implementing UI/routing/data fetching
 6. **Dark mode** — Toggle adds/removes `dark` class on `<html>`, CSS variables handle the rest
 7. **Authentication** — Check `localStorage.getItem('zeia-auth')` for session state

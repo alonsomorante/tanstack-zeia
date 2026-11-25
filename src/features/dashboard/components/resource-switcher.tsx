@@ -4,7 +4,7 @@ import { cn } from '@/lib/utils'
 import { useAuth } from '@/features/auth/hooks/use-auth'
 import { useResource } from '@/features/auth/hooks/use-resource'
 import type { Resource } from '@/features/auth/hooks/use-resource'
-import { getFirstResourceModuleUrl, getResourceModuleUrls } from '@/features/auth/lib/modules'
+import { getResourceHomeUrl, getResourceModuleUrls } from '@/features/auth/lib/modules'
 
 const RESOURCE_OPTIONS: Array<{ value: Resource; label: string; icon: typeof Zap }> = [
   { value: 'energy', label: 'Energía', icon: Zap },
@@ -25,13 +25,13 @@ export function ResourceSwitcher() {
     setResource(next)
 
     // Si la página actual existe también en el recurso destino, se mantiene.
-    // Si no existe, se navega al primer módulo del recurso destino.
+    // Si no existe, se navega al inicio del recurso destino (en energía, el Mapa de Red).
     const targetUrls = getResourceModuleUrls(user, next)
     if (targetUrls.includes(currentPath)) return
 
-    const firstUrl = getFirstResourceModuleUrl(user, next)
-    if (firstUrl) {
-      router.navigate({ to: firstUrl })
+    const homeUrl = getResourceHomeUrl(user, next)
+    if (homeUrl) {
+      router.navigate({ to: homeUrl })
     }
   }
 

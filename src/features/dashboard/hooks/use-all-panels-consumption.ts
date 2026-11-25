@@ -8,6 +8,7 @@ export interface PanelConsumption {
   panel: ElectricalPanel
   data: ConsumptionDistributionResponse | undefined
   isLoading: boolean
+  isError: boolean
   mainKwh: number
 }
 
@@ -49,6 +50,7 @@ export function useAllPanelsConsumption(
         panel,
         data,
         isLoading: query?.isLoading ?? false,
+        isError: query?.isError ?? false,
         mainKwh: data?.main_consumption_kwh ?? 0,
       }
     })

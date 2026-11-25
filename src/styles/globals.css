@@ -381,3 +381,99 @@
     opacity: 0;
   }
 }
+
+/* ═══════════════════════════════════════════════════════════════════════
+   MAPA DE RED — flujo de energía por los conductores y entrada de nodos
+   ═══════════════════════════════════════════════════════════════════════ */
+
+/* Puntos que avanzan en el sentido del conductor (acometida → tablero → punto).
+   El desplazamiento es múltiplo del patrón (1 + 10) para que el bucle no salte. */
+@keyframes network-flow {
+  to {
+    stroke-dashoffset: -22;
+  }
+}
+
+.network-flow {
+  stroke-dasharray: 1 10;
+  animation: network-flow 1.6s linear infinite;
+}
+
+/* `backwards`: al terminar, la opacidad vuelve a la del estilo inline (atenuado al enfocar). */
+@keyframes network-node-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.network-node-in {
+  animation: network-node-in 0.45s cubic-bezier(0.2, 0.7, 0.2, 1) backwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .network-flow {
+    animation: none;
+    stroke-opacity: 0;
+  }
+
+  .network-node-in {
+    animation: none;
+  }
+}
+
+/* Panel de detalle (lecturas, curva, eventos, días, comparación) sobre el mapa */
+@keyframes network-drawer-in {
+  from {
+    opacity: 0;
+    transform: translateX(32px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes network-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes network-tray-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.network-drawer-panel {
+  animation: network-drawer-in 0.32s cubic-bezier(0.2, 0.7, 0.2, 1) backwards;
+}
+
+.network-drawer-backdrop {
+  animation: network-fade-in 0.25s ease-out backwards;
+}
+
+.network-tray-in {
+  animation: network-tray-in 0.3s cubic-bezier(0.2, 0.7, 0.2, 1) backwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .network-drawer-panel,
+  .network-drawer-backdrop,
+  .network-tray-in {
+    animation: none;
+  }
+}

@@ -108,7 +108,7 @@ describe('ResourceSwitcher', () => {
     expect(mockRouter.navigate).not.toHaveBeenCalled()
   })
 
-  it('navigates back to the first energy module when switching from a water page', async () => {
+  it('navigates to the energy home (Mapa de Red) when switching from a water page', async () => {
     localStorage.setItem('zeia-auth', JSON.stringify({ token: 'abc', user: mockUser() }))
     localStorage.setItem('zeia-resource', 'water')
     mockRouter.pathname = '/energia/water/dashboard/panel'
@@ -119,7 +119,7 @@ describe('ResourceSwitcher', () => {
     await user.click(screen.getByRole('button', { name: /energía/i }))
 
     await waitFor(() => {
-      expect(mockRouter.navigate).toHaveBeenCalledWith({ to: '/energia/dashboard/panel' })
+      expect(mockRouter.navigate).toHaveBeenCalledWith({ to: '/energia/dashboard/mapa' })
     })
   })
 

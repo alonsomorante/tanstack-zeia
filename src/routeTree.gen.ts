@@ -16,6 +16,7 @@ import { Route as AmbientalLoginRouteImport } from './routes/ambiental/login'
 import { Route as EnergiaDashboardTarifarioRouteImport } from './routes/energia/dashboard/tarifario'
 import { Route as EnergiaDashboardPanelRouteImport } from './routes/energia/dashboard/panel'
 import { Route as EnergiaDashboardMonitoreoRouteImport } from './routes/energia/dashboard/monitoreo'
+import { Route as EnergiaDashboardMapaRouteImport } from './routes/energia/dashboard/mapa'
 import { Route as EnergiaDashboardHomeRouteImport } from './routes/energia/dashboard/home'
 import { Route as EnergiaDashboardDesbalanceRouteImport } from './routes/energia/dashboard/desbalance'
 import { Route as EnergiaDashboardComparadorRouteImport } from './routes/energia/dashboard/comparador'
@@ -71,6 +72,11 @@ const EnergiaDashboardMonitoreoRoute =
     path: '/energia/dashboard/monitoreo',
     getParentRoute: () => rootRouteImport,
   } as any)
+const EnergiaDashboardMapaRoute = EnergiaDashboardMapaRouteImport.update({
+  id: '/energia/dashboard/mapa',
+  path: '/energia/dashboard/mapa',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const EnergiaDashboardHomeRoute = EnergiaDashboardHomeRouteImport.update({
   id: '/energia/dashboard/home',
   path: '/energia/dashboard/home',
@@ -185,6 +191,7 @@ export interface FileRoutesByFullPath {
   '/energia/dashboard/comparador': typeof EnergiaDashboardComparadorRoute
   '/energia/dashboard/desbalance': typeof EnergiaDashboardDesbalanceRouteWithChildren
   '/energia/dashboard/home': typeof EnergiaDashboardHomeRoute
+  '/energia/dashboard/mapa': typeof EnergiaDashboardMapaRoute
   '/energia/dashboard/monitoreo': typeof EnergiaDashboardMonitoreoRoute
   '/energia/dashboard/panel': typeof EnergiaDashboardPanelRoute
   '/energia/dashboard/tarifario': typeof EnergiaDashboardTarifarioRoute
@@ -211,6 +218,7 @@ export interface FileRoutesByTo {
   '/energia/dashboard/comparador': typeof EnergiaDashboardComparadorRoute
   '/energia/dashboard/desbalance': typeof EnergiaDashboardDesbalanceRouteWithChildren
   '/energia/dashboard/home': typeof EnergiaDashboardHomeRoute
+  '/energia/dashboard/mapa': typeof EnergiaDashboardMapaRoute
   '/energia/dashboard/monitoreo': typeof EnergiaDashboardMonitoreoRoute
   '/energia/dashboard/panel': typeof EnergiaDashboardPanelRoute
   '/energia/dashboard/tarifario': typeof EnergiaDashboardTarifarioRoute
@@ -238,6 +246,7 @@ export interface FileRoutesById {
   '/energia/dashboard/comparador': typeof EnergiaDashboardComparadorRoute
   '/energia/dashboard/desbalance': typeof EnergiaDashboardDesbalanceRouteWithChildren
   '/energia/dashboard/home': typeof EnergiaDashboardHomeRoute
+  '/energia/dashboard/mapa': typeof EnergiaDashboardMapaRoute
   '/energia/dashboard/monitoreo': typeof EnergiaDashboardMonitoreoRoute
   '/energia/dashboard/panel': typeof EnergiaDashboardPanelRoute
   '/energia/dashboard/tarifario': typeof EnergiaDashboardTarifarioRoute
@@ -266,6 +275,7 @@ export interface FileRouteTypes {
     | '/energia/dashboard/comparador'
     | '/energia/dashboard/desbalance'
     | '/energia/dashboard/home'
+    | '/energia/dashboard/mapa'
     | '/energia/dashboard/monitoreo'
     | '/energia/dashboard/panel'
     | '/energia/dashboard/tarifario'
@@ -292,6 +302,7 @@ export interface FileRouteTypes {
     | '/energia/dashboard/comparador'
     | '/energia/dashboard/desbalance'
     | '/energia/dashboard/home'
+    | '/energia/dashboard/mapa'
     | '/energia/dashboard/monitoreo'
     | '/energia/dashboard/panel'
     | '/energia/dashboard/tarifario'
@@ -318,6 +329,7 @@ export interface FileRouteTypes {
     | '/energia/dashboard/comparador'
     | '/energia/dashboard/desbalance'
     | '/energia/dashboard/home'
+    | '/energia/dashboard/mapa'
     | '/energia/dashboard/monitoreo'
     | '/energia/dashboard/panel'
     | '/energia/dashboard/tarifario'
@@ -345,6 +357,7 @@ export interface RootRouteChildren {
   EnergiaDashboardComparadorRoute: typeof EnergiaDashboardComparadorRoute
   EnergiaDashboardDesbalanceRoute: typeof EnergiaDashboardDesbalanceRouteWithChildren
   EnergiaDashboardHomeRoute: typeof EnergiaDashboardHomeRoute
+  EnergiaDashboardMapaRoute: typeof EnergiaDashboardMapaRoute
   EnergiaDashboardMonitoreoRoute: typeof EnergiaDashboardMonitoreoRoute
   EnergiaDashboardPanelRoute: typeof EnergiaDashboardPanelRoute
   EnergiaDashboardTarifarioRoute: typeof EnergiaDashboardTarifarioRoute
@@ -403,6 +416,13 @@ declare module '@tanstack/react-router' {
       path: '/energia/dashboard/monitoreo'
       fullPath: '/energia/dashboard/monitoreo'
       preLoaderRoute: typeof EnergiaDashboardMonitoreoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/energia/dashboard/mapa': {
+      id: '/energia/dashboard/mapa'
+      path: '/energia/dashboard/mapa'
+      fullPath: '/energia/dashboard/mapa'
+      preLoaderRoute: typeof EnergiaDashboardMapaRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/energia/dashboard/home': {
@@ -577,6 +597,7 @@ const rootRouteChildren: RootRouteChildren = {
   EnergiaDashboardComparadorRoute: EnergiaDashboardComparadorRoute,
   EnergiaDashboardDesbalanceRoute: EnergiaDashboardDesbalanceRouteWithChildren,
   EnergiaDashboardHomeRoute: EnergiaDashboardHomeRoute,
+  EnergiaDashboardMapaRoute: EnergiaDashboardMapaRoute,
   EnergiaDashboardMonitoreoRoute: EnergiaDashboardMonitoreoRoute,
   EnergiaDashboardPanelRoute: EnergiaDashboardPanelRoute,
   EnergiaDashboardTarifarioRoute: EnergiaDashboardTarifarioRoute,

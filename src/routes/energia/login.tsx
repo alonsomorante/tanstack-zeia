@@ -5,7 +5,7 @@ import { Eye, EyeOff, Loader2, Activity, ArrowLeft } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { identifyEnergyUser } from '@/lib/analytics'
 import { requestToken, AuthError } from '@/features/auth/api/request-token'
-import { getFirstResourceModuleUrl } from '@/features/auth/lib/modules'
+import { getDefaultLandingUrl } from '@/features/auth/lib/modules'
 import { useAuth } from '@/features/auth/hooks/use-auth'
 
 export const Route = createFileRoute('/energia/login')({
@@ -26,11 +26,8 @@ export function LoginPage() {
       setAuth(data)
       identifyEnergyUser(data.user)
 
-      const firstUrl =
-        getFirstResourceModuleUrl(data.user, 'energy') ??
-        getFirstResourceModuleUrl(data.user, 'water') ??
-        '/energia/dashboard/panel'
-      router.navigate({ to: firstUrl })
+      // Con energía habilitada se entra al Mapa de Red; si no, al primer módulo disponible.
+      router.navigate({ to: getDefaultLandingUrl(data.user) })
     },
     onError: (err: Error) => {
       if (err instanceof AuthError) {
